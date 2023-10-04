@@ -71,12 +71,22 @@ static int cmd_si(char *args){
 
 static int cmd_info(char *args){
   char *arg=strtok(NULL," ");
-  if(!strcmp(arg,"r")){
+  if(arg == NULL){
+    printf("info r or info w\n");
+    return 0;
+  }
+  else if(strcmp(arg,"r") == 0){
     isa_reg_display();
     return 0;
   }
+  else if(strcmp(arg,"w") == 0){
+    return 0;
+  }
+  else {
+    printf("Usage:info r or info w\n");
+    return 0;
+  }
 
-  return 0;
 }
 
 static int cmd_help(char *args);
