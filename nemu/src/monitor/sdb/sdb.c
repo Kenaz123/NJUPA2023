@@ -53,6 +53,22 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args){
+  char *arg=strtok(NULL," ");
+  int cnt = 0;
+  if(arg==NULL){
+    cpu_exec(1);
+    return 0;
+  }
+  sscanf(arg,"%d",&cnt);
+  if(cnt<-1){
+    printf("Error,please input an integer equal to or greater than -1\n");
+    return 0;
+  }
+  cpu_exec(cnt);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -63,6 +79,7 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Single step execution", cmd_si},
 
   /* TODO: Add more commands */
 
