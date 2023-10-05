@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -89,6 +90,33 @@ static int cmd_info(char *args){
 
 }
 
+static int cmd_x(char *args){
+  char *arg=strtok(NULL," ");
+  if(arg == NULL){
+    printf("Error,please input x N EXPR\n");
+    return 0;
+  }
+  char *c=strtok(NULL," ");
+  
+  if(c == NULL){
+    printf("Error,please input x N EXPR\n");
+    return 0;
+  }
+  int mem=strtol(arg,NULL,10);
+  vaddr_t a=strtol(c,NULL,16);
+  int i;
+  for(i=0;i<mem;i++){
+    word_t w = paddr_read(a,8);
+    a+=8;
+    printf("%#010x",w);
+    printf("\n");
+
+  }
+  return 0;
+
+
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -101,6 +129,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single step execution", cmd_si},
   { "info", "Print register status or watchpoint information", cmd_info},
+  { "x", "Calculate EXPR and output N memory data", cmd_x},
 
   /* TODO: Add more commands */
 
