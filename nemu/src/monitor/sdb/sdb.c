@@ -106,8 +106,8 @@ static int cmd_x(char *args){
   vaddr_t a=strtol(c,NULL,16);
   int i;
   for(i=0;i<mem;i++){
-    word_t w = paddr_read(a,8);
-    a+=8;
+    word_t w = paddr_read(a,4);
+    a+=4;
     printf("%#010x",w);
     printf("\n");
 
