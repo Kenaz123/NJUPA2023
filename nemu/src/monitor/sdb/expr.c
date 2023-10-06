@@ -182,8 +182,10 @@ int find(int p,int q){
       }
     }
   }
-  if(par !=0) return -1;
+  if(par !=0) {return -1;}
+  else{
   return res;
+  }
 }
 
 word_t eval(int p,int q,bool *confirm){
