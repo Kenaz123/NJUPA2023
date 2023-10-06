@@ -113,8 +113,18 @@ static int cmd_x(char *args){
 
   }
   return 0;
+}
 
-
+static int cmd_p(char *args){
+  bool success;
+  word_t res=expr(args,&success);
+  if(!success){
+    printf("invalid expression");
+  }
+  else{
+    printf("%u\n",res);
+  }
+  return 0;
 }
 
 static int cmd_help(char *args);
@@ -130,6 +140,7 @@ static struct {
   { "si", "Single step execution", cmd_si},
   { "info", "Print register status or watchpoint information", cmd_info},
   { "x", "Calculate EXPR and output N memory data", cmd_x},
+  { "p", "Calculate the expression", cmd_p},
 
   /* TODO: Add more commands */
 
