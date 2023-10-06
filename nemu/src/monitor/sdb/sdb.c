@@ -119,7 +119,7 @@ static int cmd_p(char *args){
   bool success;
   word_t res=expr(args,&success);
   if(!success){
-    printf("invalid expression");
+    printf("invalid expression\n");
   }
   else{
     printf("%u\n",res);
