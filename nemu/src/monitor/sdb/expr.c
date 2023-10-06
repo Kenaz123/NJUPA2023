@@ -191,13 +191,14 @@ int find(int p,int q){
 word_t eval(int p,int q,bool *confirm){
   *confirm = true;
   if(p > q){
-    confirm = false;
+    *confirm = false;
     return 0;
     //bad expression
   }
   else if(p == q){
     if(tokens[p].type!= TK_NUM){
-      confirm = false;
+      *confirm = false;
+      Log("Error,don't input like '('");
       return 0;
     }
     word_t result = strtol(tokens[p].str,NULL,10);
