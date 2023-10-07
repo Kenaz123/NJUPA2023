@@ -29,7 +29,7 @@ enum {
   TK_AND,TK_OR,
   TK_NUM,// 10 & 16
   TK_REG,
-  TK_VAR,
+  //TK_VAR,
   /* TODO: Add more token types */
 
 };
@@ -60,7 +60,7 @@ static struct rule {
   {"\\)", ')'},
   {"(0x)?[0-9]+", TK_NUM},
   {"\\$\\w+", TK_REG},
-  {"[A-Za-z_]\\w*", TK_VAR},
+  //{"[A-Za-z_]\\w*", TK_VAR},
 };
 static int bound_types[] = {')',TK_NUM,TK_REG};
 static int nop_types[] = {'(',')',TK_NUM,TK_REG};
@@ -130,7 +130,7 @@ static bool make_token(char *e) {
         switch (rules[i].token_type) {
           case TK_NUM:
           case TK_REG:
-          case TK_VAR:
+          //case TK_VAR:
           strncpy(tokens[nr_token].str,substr_start,substr_len);
           tokens[nr_token].str[substr_len] = '\0';//avoid overflow
           break;
@@ -226,7 +226,7 @@ int find(int p,int q){
         tmp = 6;break;
         case TK_OR:
         tmp = 7;break;
-        default:assert(0);
+        default: return -1;
       }
       if(tmp>priority || (tmp==priority && !matchtypes(tokens[i].type,unary_types,3))){
         priority = tmp;
@@ -250,7 +250,7 @@ word_t eval_operand(int i,bool *confirm){
     return 0;
   }
 }
-
+//unary operator
 word_t calc1(int op,word_t val, bool *confirm){
   switch(op){
     case TK_NEG: return -val;
