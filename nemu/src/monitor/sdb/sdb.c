@@ -213,7 +213,7 @@ void sdb_mainloop() {
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 }
-
+/*
 void test_expr(){
   FILE *fp=fopen("/home/aifly/ics2023/nemu/tools/gen-expr/input","r");
   if(fp == NULL) perror("test_expr failed");
@@ -242,12 +242,12 @@ void test_expr(){
 
 
   }
-}
+}*/
 
 void init_sdb() {
   /* Compile the regular expressions. */
   init_regex();
-  test_expr();
+  //test_expr();
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
