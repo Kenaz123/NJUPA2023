@@ -98,7 +98,7 @@ typedef struct token {
   char str[100];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[1000] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
@@ -257,6 +257,7 @@ word_t calc1(int op,word_t val, bool *confirm){
     case TK_POS: return val;
     case TK_DEREF: return paddr_read(val,4);
     default: *confirm = false;
+    return 0;
   }
   return 0;
 }
