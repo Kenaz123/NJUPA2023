@@ -59,7 +59,7 @@ static struct rule {
   {"\\(", '('},
   {"\\)", ')'},
   {"(0x)?[0-9]+", TK_NUM},
-  {"\\$\\w+", TK_REG},
+  {"\\$(\\$)?\\w+", TK_REG},
   //{"[A-Za-z_]\\w*", TK_VAR},
 };
 static int bound_types[] = {')',TK_NUM,TK_REG};
