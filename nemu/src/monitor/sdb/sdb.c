@@ -119,6 +119,7 @@ static int cmd_x(char *args){
 
 static int cmd_p(char *args){
   bool success;
+  success = true;
   word_t res=expr(args,&success);
   if(!success){
     printf("invalid expression\n");
