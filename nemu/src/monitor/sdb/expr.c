@@ -317,6 +317,8 @@ word_t eval(int p,int q,bool *confirm){
       return 0;
     }
     bool ok1,ok2;
+    ok1 = true;
+    ok2 = true;
     word_t val1 = eval(p,dom-1,&ok1);
     word_t val2 = eval(dom+1,q,&ok2);
     
