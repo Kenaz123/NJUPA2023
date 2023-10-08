@@ -82,6 +82,7 @@ static int cmd_info(char *args){
     return 0;
   }
   else if(strcmp(arg,"w") == 0){
+    // wp_iterate();
     return 0;
   }
   else {
@@ -128,6 +129,33 @@ static int cmd_p(char *args){
   return 0;
 }
 
+static int cmd_w(char *args){
+  // if(!args){
+  //   printf("Usage: w EXPR\n");
+  //   return 0;
+  // }
+  // bool success;
+  // word_t res = expr(args,&success);
+  // if(!success){
+  //   printf("invalid expression");
+  // }
+  // else {
+  //   wp_watch(args,res);
+  // }
+  return 0;
+}
+
+static int cmd_d(char *args){
+  char *arg=strtok(NULL," ");
+  if(!arg){
+    printf("Usage: d N\n");
+    return 0;
+  }
+  // int no=strtol(arg,NULL,10);
+  // wp_remove(no);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -142,6 +170,8 @@ static struct {
   { "info", "Print register status or watchpoint information", cmd_info},
   { "x", "Calculate EXPR and output N memory data", cmd_x},
   { "p", "Calculate the expression", cmd_p},
+  { "w", "Watch for the variation of the result of EXPR,pause at variation point", cmd_w},
+  { "d", "Delete watchpoint of wp.NO=N", cmd_d}
 
   /* TODO: Add more commands */
 

@@ -20,7 +20,8 @@
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-
+  char exp[32];
+  word_t e;
   /* TODO: Add more members if necessary */
 
 } WP;
@@ -28,26 +29,33 @@ typedef struct watchpoint {
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
 
-/*static WP* new_wp(){
-  assert(free_);
-  WP* ret = free_;
-  free_=free_->next;
-  ret->next=head;
-  head = ret;
-  return ret;
-}
+// static WP* new_wp(){
+//   assert(free_!=NULL);
+//   WP* ret = free_;
+//   free_=free_->next;
+//   ret->next=head;
+//   head = ret;
+//   return ret;
+// }
 
-static void free_wp(WP *wp){
-  WP* h=free_;
-  if(h==wp) head =NULL;
-  else{
-    while(h && h->next !=wp) h = h->next;
-    assert(h);
-    h->next =wp->next;
-  }
-  wp->next =free_;
-  free_=wp;
-}*/
+// static void free_wp(WP *wp){
+//   WP* h=free_;
+//   if(h==wp) head =NULL;
+//   else{
+//     while(h && h->next !=wp) h = h->next;
+//     assert(h);
+//     h->next =wp->next;
+//   }
+//   wp->next =free_;
+//   free_=wp;
+// }
+
+void wp_watch(char *expr,word_t res){
+  // WP *wp =new_wp();
+  // strcpy(wp->exp,exp);
+  // wp->old = res;
+  // printf("Watchpoint %d: %s\n",wp->NO,expr);
+}
 
 void init_wp_pool() {
   int i;

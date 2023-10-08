@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <memory/vaddr.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -242,13 +243,14 @@ int find(int p,int q){
   return res;
   }
 }
+
 word_t eval_operand(int i,bool *confirm){
   switch(tokens[i].type){
     case TK_NUM:
     if(strncmp("0x",tokens[i].str,2)==0) return strtol(tokens[i].str,NULL,16);
     else return strtol(tokens[i].str,NULL,10);
     case TK_REG:
-    return (int)isa_reg_str2val(tokens[i].str,confirm);
+    return isa_reg_str2val(tokens[i].str,confirm);
     default: *confirm = false;
     return 0;
   }
@@ -258,7 +260,7 @@ word_t calc1(int op,word_t val, bool *confirm){
   switch(op){
     case TK_NEG: return -val;
     case TK_POS: return val;
-    case TK_DEREF: return paddr_read(val,4);
+    case TK_DEREF: return vaddr_read(val,4);
     default: *confirm = false;
     return 0;
   }
@@ -274,7 +276,7 @@ word_t calc2(word_t val1,int op,word_t val2,bool *confirm){
       *confirm = false;
       return 0;
     }
-    return (sword_t)val1 / (sword_t)val2;
+    return val1 / val2;
     case TK_AND: return val1 && val2;
     case TK_OR: return val1 || val2;
     case TK_EQ: return val1 == val2;
@@ -288,7 +290,6 @@ word_t calc2(word_t val1,int op,word_t val2,bool *confirm){
 }
 
 word_t eval(int p,int q,bool *confirm){
-  *confirm = true;
   if(p > q){
     *confirm = false;
     return 0;
