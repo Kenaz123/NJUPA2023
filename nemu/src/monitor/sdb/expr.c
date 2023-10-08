@@ -248,7 +248,7 @@ word_t eval_operand(int i,bool *confirm){
     if(strncmp("0x",tokens[i].str,2)==0) return strtol(tokens[i].str,NULL,16);
     else return strtol(tokens[i].str,NULL,10);
     case TK_REG:
-    return isa_reg_str2val(tokens[i].str,confirm);
+    return (int)isa_reg_str2val(tokens[i].str,confirm);
     default: *confirm = false;
     return 0;
   }
