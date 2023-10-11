@@ -19,12 +19,16 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <memory/paddr.h>
+#include <memory/vaddr.h>
 #include <stdio.h>
 
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void wp_watch();
+void wp_remove();
+void wp_iterate();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -82,7 +86,7 @@ static int cmd_info(char *args){
     return 0;
   }
   else if(strcmp(arg,"w") == 0){
-    // wp_iterate();
+    wp_iterate();
     return 0;
   }
   else {
@@ -108,7 +112,7 @@ static int cmd_x(char *args){
   vaddr_t a=strtol(c,NULL,16);
   int i;
   for(i=0;i<mem;i++){
-    word_t w = paddr_read(a,4);
+    word_t w = vaddr_read(a,4);
     a+=4;
     printf("%#010x",w);
     printf("\n");
@@ -131,18 +135,20 @@ static int cmd_p(char *args){
 }
 
 static int cmd_w(char *args){
-  // if(!args){
-  //   printf("Usage: w EXPR\n");
-  //   return 0;
-  // }
-  // bool success;
-  // word_t res = expr(args,&success);
-  // if(!success){
-  //   printf("invalid expression");
-  // }
-  // else {
-  //   wp_watch(args,res);
-  // }
+  char *arg=strtok(NULL," ");
+  if(!arg){
+     printf("Usage: w EXPR\n");
+     return 0;
+  }
+  bool success;
+  success = true;
+  word_t res = expr(arg,&success);
+  if(!success){
+     printf("invalid expression");
+   }
+  else {
+     wp_watch(arg,res);
+  }
   return 0;
 }
 
@@ -152,8 +158,8 @@ static int cmd_d(char *args){
     printf("Usage: d N\n");
     return 0;
   }
-  // int no=strtol(arg,NULL,10);
-  // wp_remove(no);
+  int no=strtol(arg,NULL,10);
+  wp_remove(no);
   return 0;
 }
 
