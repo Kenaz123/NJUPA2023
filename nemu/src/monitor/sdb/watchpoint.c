@@ -21,7 +21,7 @@ typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
   char exp[32];
-  word_t e;
+  word_t old;
   /* TODO: Add more members if necessary */
 
 } WP;
@@ -29,33 +29,73 @@ typedef struct watchpoint {
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
 
-// static WP* new_wp(){
-//   assert(free_!=NULL);
-//   WP* ret = free_;
-//   free_=free_->next;
-//   ret->next=head;
-//   head = ret;
-//   return ret;
-// }
+static WP* new_wp(){
+  assert(free_!=NULL);
+  WP* ret = free_;
+  free_=free_->next;
+  ret->next=head;
+  head = ret;
+  return ret;
+}
 
-// static void free_wp(WP *wp){
-//   WP* h=free_;
-//   if(h==wp) head =NULL;
-//   else{
-//     while(h && h->next !=wp) h = h->next;
-//     assert(h);
-//     h->next =wp->next;
-//   }
-//   wp->next =free_;
-//   free_=wp;
-// }
+static void free_wp(WP *wp){
+  WP* h=free_;
+  if(h==wp) head =NULL;
+  else{
+     while(h && h->next !=wp) h = h->next;
+     assert(h);
+     h->next =wp->next;
+  }
+  wp->next =free_;
+  free_=wp;
+}
 
 void wp_watch(char *expr,word_t res){
-  // WP *wp =new_wp();
-  // strcpy(wp->exp,exp);
-  // wp->old = res;
-  // printf("Watchpoint %d: %s\n",wp->NO,expr);
+  WP *wp =new_wp();
+  strcpy(wp->exp,expr);
+  wp->old = res;
+  printf("Watchpoint %d: %s\n",wp->NO,expr);
 }
+
+void wp_remove(int no){
+  assert(no<NR_WP);
+  WP* s = head;
+  for(s =head; s;s=s->next){
+    if(s->NO == no){
+      free_wp(s);
+      printf("Delete watchpoint %d:%s\n",s->NO,s->exp);
+      break;
+    }
+  }
+}
+
+void wp_iterate(){//print the info of the watchpoints
+  WP* h=head;
+  if(!h){
+    printf("No current watchpoints.\n");
+    return;
+  }
+  printf("%-8s%-8s%-8s\n","Num","EXPR","Old");
+  while(h){
+    printf("%-8d%-8s%-8u\n",h->NO,h->exp,h->old);
+    h = h->next;
+  }
+}
+
+void wp_difftest(){
+  WP* h=head;
+  while(h){
+    bool twatch;
+    twatch = true;
+    word_t new = expr(h->exp,&twatch);
+    if(h->old!=new){
+      printf("Watchpoint %d:%s \n""Old value:%u\n""New value:%u\n",h->NO,h->exp,h->old,new);
+      h->old=new;
+    }
+    h=h->next;
+  }
+}
+
 
 void init_wp_pool() {
   int i;
