@@ -95,7 +95,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, R(rd) = src1 - src2);
   //INSTPAT(sll);
   //INSTPAT(slt);
-  //INSTPAT(sltu);
+  INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu   , R, R(rd) = src1 < src2);
   //INSTPAT(xor);
   //INSTPAT(srl);
   //INSTPAT(sra);
