@@ -108,7 +108,7 @@ static int decode_exec(Decode *s) {
   //INSTPAT(mulhu);
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = (sword_t)src1 / (sword_t)src2);
   //INSTPAT(divu);
-  //INSTPAT(rem);
+  INSTPAT("0000001 ????? ????? 111 ????? 01100 11", rem    , R, R(rd) = (sword_t)src1 % (sword_t)src2);
   //INSTPAT(remu);
  
  
