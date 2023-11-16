@@ -8,7 +8,7 @@ size_t strlen(const char *s) {
   if(s == NULL) return 0;
   size_t n = 0;
   while(s[n]!='\0'){
-    n++;
+    ++n;
   }
   return n;
 }
@@ -16,7 +16,12 @@ size_t strlen(const char *s) {
 char *strcpy(char *dst, const char *src) {
   if(dst == NULL || src == NULL) return dst;
   char *res = dst;
-  while((*dst++=*src++)!='\0');
+ // while((*dst++=*src++)!='\0');
+  do{
+    *dst = *src;
+    dst++;
+    src++;
+  }while(*src != '\0');
   return res;
 }
 
@@ -25,14 +30,14 @@ char *strncpy(char *dst, const char *src, size_t n) {
   char *res = dst;
   while(*src!='\0'&& n!=0){
     *dst=*src;
-    dst++;
-    src++;
-    n--;
+    ++dst;
+    ++src;
+    --n;
   }
   while(n!=0){
     *dst='\0';
-    dst++;
-    n--;
+    ++dst;
+    --n;
   }
   return res;
 }
@@ -41,9 +46,14 @@ char *strcat(char *dst, const char *src) {
   if(dst == NULL || src == NULL) return dst;
   char *res = dst;
   while(*dst!='\0'){
-    dst++;
+    ++dst;
   }
-  while((*dst++=*src++)!='\0'); 
+  //while((*dst++=*src++)!='\0'); 
+  do{
+    *dst = *src;
+    dst++;
+    src++;
+  }while(*src != '\0');
   return res;
 }
 
@@ -59,11 +69,11 @@ int strcmp(const char *s1, const char *s2) {
 int strncmp(const char *s1, const char *s2, size_t n) {
   if(s1 == NULL || s2 == NULL) return 0;
   while(*s1!='\0' && *s2!='\0' && *s1==*s2 && n!=0){
-    s1++;
-    s2++;
-    n--;
+    ++s1;
+    ++s2;
+    --n;
   }
-  return *s1 == *s2 ? 0 : (((unsigned char)*s1 < (unsigned char)*s2)? -1:1);
+  return *s1 == *s2 || n==0 ? 0 : (((unsigned char)*s1 < (unsigned char)*s2)? -1:1);
 }
 
 void *memset(void *s, int c, size_t n) {
@@ -116,7 +126,6 @@ void *memcpy(void *out, const void *in, size_t n) {
 
 int memcmp(const void *s1, const void *s2, size_t n) {
   if(s1 == NULL || s2 == NULL) return 0;
-  if(n==0) return 0;
   const unsigned char *src1 = s1;
   const unsigned char *src2 = s2;
   while(n!=0 && *src1==*src2 && *src1!='\0' && *src2!='\0'){
@@ -124,7 +133,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
     ++src1;
     ++src2;
   }
-  return *src1 == *src2 ? 0:((*src1<*src2)?-1:1);
+  return *src1 == *src2|| n==0 ? 0:((*src1<*src2)?-1:1);
 }
 
 #endif
