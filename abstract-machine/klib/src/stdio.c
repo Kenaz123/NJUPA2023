@@ -5,7 +5,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-//static char buf[1024];
+static char buf[1024];
 static void reverse(char *s,int len){
   char *start = s;
   char *end = s + len - 1;
@@ -35,17 +35,41 @@ static int transstoi(int n,char *s,int base){
 
 }
 int printf(const char *fmt, ...) {
- // va_list ap;
- // int n;
-  //va_start(ap,fmt);
-  //n = vsprintf(buf,fmt,ap);
-  //va_end(ap);
-  //return n;
-  return 0;
+  va_list ap;
+  int n;
+  va_start(ap,fmt);
+  memset(buf,'\0',1024);
+  n = vsprintf(buf,fmt,ap);
+  int i=0;
+  while(buf[i]!='\0'){
+    putch(buf[i]);
+    i++;
+  }
+  va_end(ap);
+  return n;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-  return 0;
+  char *start = out;
+  for(; *fmt != '\0'; ++fmt){
+    if(*fmt != '%'){
+      *out = *fmt;
+      ++out;
+    }else{
+      switch(*(++fmt)){
+        case '%': *out = *fmt; ++out; break;
+        case 'd': out += transstoi(va_arg(ap,int), out, 10);break;
+        case 's':{
+          char *s = va_arg(ap,char*);
+          strcpy(out,s);
+          out+=strlen(out);
+          break;
+        }
+      }
+    }
+  }
+  *out = '\0';
+  return out - start;
 }
 
 int sprintf(char *out, const char *fmt, ...) {
