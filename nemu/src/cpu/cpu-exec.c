@@ -125,7 +125,7 @@ static void print_iringbuf(){
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
   iringbuf_idx = 0;
-  for(int i = 0;i < IRING_BUF_SIZE;i++){
+  for(int i = 0;i < IRING_BUF_SIZE;++i){
     memset(iringbuf[i],' ',IRING_BUF_PC_START);
     iringbuf[i][IRING_BUF_PC_START] = '\0';
   }
