@@ -24,6 +24,10 @@
  * You can modify this value as you want.
  */
 #define MAX_INST_TO_PRINT 1000
+#define IRING_BUF_SIZE 16
+#define IRING_BUF_PC_START 3
+static char iringbuf[IRING_BUF_SIZE][128+IRING_BUF_PC_START];
+static size_t iringbuf_idx = 0;
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -48,6 +52,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
+  strcpy(iringbuf[iringbuf_idx]+IRING_BUF_PC_START,s->logbuf);
+  iringbuf_idx = (iringbuf_idx + 1) % IRING_BUF_SIZE;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
   int i;
@@ -97,9 +103,32 @@ void assert_fail_msg() {
   statistic();
 }
 
+/*print iring_buf.*/
+static void print_iringbuf(){
+  const char prefix[IRING_BUF_PC_START] = "-->";
+  for(int i = 0; i < IRING_BUF_SIZE; ++i){
+    if(iringbuf[i][IRING_BUF_PC_START] == '\0'){
+      break;
+    }
+    if((i + 1) % IRING_BUF_SIZE == iringbuf_idx){
+      strncpy(iringbuf[i],prefix,3);
+    }
+#ifdef CONFIG_ITRACE_COND
+    if(ITRACE_COND){ log_write("%s\n" , iringbuf[i]); }
+#endif
+    printf("%s\n", iringbuf[i]);
+  }
+  return;
+}
+
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
+  iringbuf_idx = 0;
+  for(int i = 0;i < IRING_BUF_SIZE;i++){
+    memset(iringbuf[i],' ',IRING_BUF_PC_START);
+    iringbuf[i][IRING_BUF_PC_START] = '\0';
+  }
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
@@ -118,6 +147,7 @@ void cpu_exec(uint64_t n) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
     case NEMU_END: case NEMU_ABORT:
+      print_iringbuf();
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
