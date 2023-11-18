@@ -108,7 +108,7 @@ static void print_iringbuf(){
   const char prefix[IRING_BUF_PC_START] = "-->";
   for(int i = 0; i < IRING_BUF_SIZE; ++i){
     if(iringbuf[i][IRING_BUF_PC_START] == '\0'){
-      break;
+      continue;
     }
     if((i) % IRING_BUF_SIZE == iringbuf_idx){
       strncpy(iringbuf[i],prefix,3);
