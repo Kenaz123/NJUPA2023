@@ -24,6 +24,30 @@ static uint8_t *pmem = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
 
+#ifdef CONFIG_MTRACE_COND
+static char mtrace[128];
+static const char Memory_type[2][3]={"Mw","Mr"};
+#endif
+#ifdef CONFIG_MTRACE
+static void memory_trace(paddr_t addr, int len, int data, int flag){
+  strncpy(mtrace,Memory_type[flag],2);
+  memset(mtrace + 2,' ',4);
+  char *p = mtrace + 6;
+  p += snprintf(p,sizeof(mtrace) - 6,FMT_WORD "    ", addr);
+  p += snprintf(p,mtrace + sizeof(mtrace) - p,"%2d""    ", len);
+  int i;
+  uint8_t *data_ptr = (uint8_t *)&data;
+  for(i = len - 1; i >= 0; i--){
+    p += snprintf(p,4," %02x", data_ptr[i]);
+  }
+  *p = '\0';
+#ifdef CONFIG_MTRACE_COND
+  if(MTRACE_COND) {log_write("%s\n", mtrace);}
+#endif
+  puts(mtrace);
+} 
+#endif
+
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
@@ -51,13 +75,27 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
-  if (likely(in_pmem(addr))) return pmem_read(addr, len);
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  if (likely(in_pmem(addr))) {
+#ifdef CONFIG_MTRACE
+      word_t data = pmem_read(addr,len);
+      memory_trace(addr,len,data,1);
+      return data;
+#else
+    return pmem_read(addr, len);
+#endif
+  }
+  IFDEF(CONFIG_DEVICE, IFDEF(CONFIG_MTRACE,word_t data = mmio_read(addr,len);memory_trace(addr,len,data,1);return data;)return mmio_read(addr, len));
+#ifdef CONFIG_MTRACE
+  memory_trace(addr,len,-1,1);
+#endif
   out_of_bound(addr);
   return 0;
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+#ifdef CONFIG_MTRACE
+  memory_trace(addr,len,data,0);
+#endif
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
