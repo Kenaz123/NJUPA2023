@@ -38,7 +38,10 @@ void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+  if (ITRACE_COND) { log_write("%s\n", _this->logbuf);
+  strcpy(iringbuf[iringbuf_idx]+IRING_BUF_PC_START,_this->logbuf);
+  iringbuf_idx = (iringbuf_idx + 1) % IRING_BUF_SIZE;
+}
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
@@ -52,8 +55,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
-  strcpy(iringbuf[iringbuf_idx]+IRING_BUF_PC_START,s->logbuf);
-  iringbuf_idx = (iringbuf_idx + 1) % IRING_BUF_SIZE;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
   int i;
