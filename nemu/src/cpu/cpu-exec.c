@@ -110,7 +110,7 @@ static void print_iringbuf(){
     if(iringbuf[i][IRING_BUF_PC_START] == '\0'){
       break;
     }
-    if((i - 1) % IRING_BUF_SIZE == iringbuf_idx){
+    if((i + 1) % IRING_BUF_SIZE == iringbuf_idx){
       strncpy(iringbuf[i],prefix,3);
     }
 #ifdef CONFIG_ITRACE_COND
