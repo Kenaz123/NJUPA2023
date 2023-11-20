@@ -163,12 +163,12 @@ config MTRACE_COND
 
 config DTRACE
   depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
-  bool "Enable memory tracer"
+  bool "Enable device tracer"
   default y
 
 config DTRACE_COND
   depends on DTRACE
-  string "Only trace memory when the condition is true"
+  string "Only trace device information when the condition is true"
   default "true"
 
 config DIFFTEST
