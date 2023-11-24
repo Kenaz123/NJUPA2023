@@ -23,6 +23,8 @@
 #include <generated/autoconf.h>
 #include <macro.h>
 
+volatile static int dummy;
+
 #ifdef CONFIG_TARGET_AM
 #include <klib.h>
 #else
