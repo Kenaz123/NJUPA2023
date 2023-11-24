@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
-
+volatile static int dummy;
 #include <generated/autoconf.h>
 #include <macro.h>
 
