@@ -25,7 +25,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   cpu.csr.mcause = NO;
   cpu.csr.mepc = epc;
 #ifdef CONFIG_ETRACE
-  printf("event ID = %d,current PC = %02x\n",NO,epc);
+  printf("event ID = %d,current PC = 0x%02x\n",NO,epc);
 #endif
   return cpu.csr.mtvec;
 }
