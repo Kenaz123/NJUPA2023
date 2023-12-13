@@ -171,6 +171,15 @@ config DTRACE_COND
   string "Only trace device information when the condition is true"
   default "true"
 
+config ETRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  bool "Enable exception tracer"
+  default y
+
+config ETRACE_COND
+  depends on ETRACE
+  string "Only trace exception information when the condition is true"
+
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
   bool "Enable differential testing"
