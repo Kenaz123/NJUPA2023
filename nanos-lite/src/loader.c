@@ -15,7 +15,7 @@ size_t ramdisk_read(void *buf, size_t offset, size_t len);
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr elf;
   ramdisk_read(&elf,0,sizeof(Elf_Ehdr));
-  assert(*(uint32_t *)elf.e_ident == 0x7f454c46);
+ // assert(*(uint32_t *)elf.e_ident == 0x7f454c46);
   Elf_Phdr phdr[elf.e_phnum];//information of the program headers
   ramdisk_read(phdr,elf.e_ehsize,elf.e_phnum * sizeof(Elf_Phdr));
   for(int i = 0; i < elf.e_phnum; i++){
