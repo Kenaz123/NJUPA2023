@@ -5,6 +5,7 @@ static Context* do_event(Event e, Context* c) {
   switch (e.event) {
     case 1: printf("event ID = %d\n c->GPRx=%d\n", e.event,c->GPRx);break;
     case 2: do_syscall(c);break;
+    case 4: yield();break;
     default: panic("Unhandled event ID = %d", e.event);
   }
 
