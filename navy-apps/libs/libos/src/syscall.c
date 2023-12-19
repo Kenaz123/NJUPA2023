@@ -78,11 +78,11 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
- // intptr_t program_break_prev = cur_brk;
- // if (_syscall_(SYS_brk, cur_brk + increment, 0, 0) == 0) {
-      // cur_brk = program_break_prev + increment;
-      // return (void *)program_break_prev;
-  // }
+  intptr_t program_break_prev = cur_brk;
+  if (_syscall_(SYS_brk, cur_brk + increment, 0, 0) == 0) {
+       cur_brk = program_break_prev + increment;
+       return (void *)program_break_prev;
+   }
   return (void *)-1;
 }
 
