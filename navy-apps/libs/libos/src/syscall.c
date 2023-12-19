@@ -46,7 +46,8 @@
 #error _syscall_ is not implemented
 #endif
 
-extern int _end;
+extern char _end;
+static intptr_t cur_brk = (intptr_t)&_end;
 
 
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
@@ -77,14 +78,12 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
-  int program_break = (int)(_end);
-  int program_break_prev = program_break;
-  _syscall_(SYS_brk, program_break + increment, 0, 0);
-      
-      program_break = program_break + increment;
+  intptr_t program_break_prev = cur_brk;
+  if (_syscall_(SYS_brk, cur_brk + increment, 0, 0) == 0) {
+      cur_brk = program_break_prev + increment;
       return (void *)program_break_prev;
-  //}
-  //return (void *)-1;
+  }
+  return (void *)-1;
 }
 
 int _read(int fd, void *buf, size_t count) {
