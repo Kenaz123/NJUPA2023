@@ -79,11 +79,12 @@ int _write(int fd, void *buf, size_t count) {
 void *_sbrk(intptr_t increment) {
   int program_break = (int)(_end);
   int program_break_prev = program_break;
-  if (_syscall_(SYS_brk, program_break + increment, 0, 0) == 0) {
+  _syscall_(SYS_brk, program_break + increment, 0, 0);
+      
       program_break = program_break + increment;
       return (void *)program_break_prev;
-  }
-  return (void *)-1;
+  //}
+  //return (void *)-1;
 }
 
 int _read(int fd, void *buf, size_t count) {
