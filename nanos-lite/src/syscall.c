@@ -15,12 +15,16 @@ int sys_brk(void *addr){
   return 0;
 }
 
+void sys_exit(int status){
+  halt(status);
+}
+
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
   //intptr_t ret;
   switch (a[0]) {
-    case SYS_exit: printf("SYS_exit\n");c->GPRx=0;halt(c->GPRx);break;//SYS_exit
+    case SYS_exit: printf("SYS_exit\n");sys_exit(c->GPR2);break;//SYS_exit
     case SYS_yield: printf("SYS_yield\n");yield();break;//SYS_yield
     case SYS_write: c->GPRx = sys_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);break;
     case SYS_brk: printf("SYS_brk\n");c->GPRx = sys_brk((void *)c->GPR2);break;
