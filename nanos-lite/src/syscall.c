@@ -27,9 +27,9 @@ void do_syscall(Context *c) {
     case SYS_exit: printf("SYS_exit\n");sys_exit(c->GPR2);c->GPRx = 0;break;//SYS_exit
     case SYS_yield: printf("SYS_yield\n");yield();c->GPRx = 0;break;//SYS_yield
     case SYS_write: c->GPRx = sys_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
-       Log("sys_write(%d, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
+       Log("sys_write(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
     case SYS_brk: c->GPRx = sys_brk((void *)c->GPR2);
-      Log("sys_brk(%p, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
+      Log("sys_brk(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   //c->GPRx = ret;
