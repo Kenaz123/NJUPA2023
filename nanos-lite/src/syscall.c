@@ -2,13 +2,13 @@
 #include "syscall.h"
 
 int sys_write(int fd,void *buf,size_t count){
-  if(fd == 1 || fd == 2){
+  //if(fd == 1 || fd == 2){
     for(int i = 0; i < count; i++){
       putch(*((char *)buf + i));
     }
     return count;
-  }
-  return -1;
+  //}
+  //return -1;
 }
 
 int sys_brk(void *addr){

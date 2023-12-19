@@ -47,7 +47,7 @@
 #endif
 
 extern char _end;
-static intptr_t cur_brk = (intptr_t)&_end;
+static intptr_t cur_brk = (intptr_t)(&_end);
 
 
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
