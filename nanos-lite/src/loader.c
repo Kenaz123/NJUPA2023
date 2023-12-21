@@ -19,7 +19,7 @@ int fs_close(int fd);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
-  if(fd <= 0){
+  if(fd < 0){
     panic("should not reach here: fd <= 0");
   }
   Elf_Ehdr elf;
