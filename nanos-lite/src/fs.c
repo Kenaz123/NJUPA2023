@@ -134,13 +134,23 @@ size_t fs_lseek(int fd, size_t offset, int whence){
       Log("file %s not opened before lseek",file_table[fd].name);
       return (long int)-1;
   }
+  size_t new_offset = -1;
+  size_t size = file_table[fd].size;
+  size_t open_offset = open_file_table[target_lseek].open_offset;
   switch(whence) {
-      case SEEK_SET:open_file_table[target_lseek].open_offset = offset;break;
-      case SEEK_CUR:open_file_table[target_lseek].open_offset += offset;break;
-      case SEEK_END:open_file_table[target_lseek].open_offset = file_table[fd].size + offset;break;
+      case SEEK_SET:
+        if(offset>size) new_offset = size;
+        new_offset = offset;break;
+      case SEEK_CUR:
+        if(offset+open_offset>size) new_offset=size;
+        new_offset = offset + open_offset;break;
+      case SEEK_END:
+        if(offset+size>size) new_offset = size;
+        new_offset = offset + size;break;
       default:panic("Failure during fs_lseek : unhandled whence %d",whence);
   }
-  return open_file_table[target_lseek].open_offset;
+  open_file_table[target_lseek].open_offset = new_offset;
+  return new_offset;
 }
 
 int fs_close(int fd){
