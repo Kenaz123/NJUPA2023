@@ -23,8 +23,8 @@ void hello_fun(void *arg) {
 void init_proc() {
   switch_boot_pcb();
   Log("Initializing processes...");
-
-  naive_uload(NULL,NULL);
+  const char filename[] = "/bin/file-test";
+  naive_uload(NULL,filename);
   // load program here
 
 }
