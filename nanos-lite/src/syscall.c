@@ -1,6 +1,6 @@
 #include <common.h>
 #include "syscall.h"
-//#define STRACE
+#define STRACE
 /*int sys_write(int fd,void *buf,size_t count){
   if(fd == 1 || fd == 2){
     for(int i = 0; i < count; i++){
@@ -46,7 +46,7 @@ void do_syscall(Context *c) {
       PRINT_TRACE(sys_brk);
       break;
     case SYS_open: ret = fs_open((const char *)c->GPR2,c->GPR3,c->GPR4);
-      //Log("fs_open(%s, %d, %d) = %d", (const char *)c->GPR2,c->GPR3,c->GPR4,ret);
+      Log("fs_open(%s, %d, %d) = %d", (const char *)c->GPR2,c->GPR3,c->GPR4,ret);
       //PRINT_TRACE(fs_open);
       break;
     case SYS_read: ret = fs_read(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
@@ -54,7 +54,7 @@ void do_syscall(Context *c) {
       PRINT_TRACE(fs_read);
       break;
     case SYS_close: ret = fs_close(c->GPR2);
-      //Log("fs_close(%d) = %d",c->GPR2,ret);
+      Log("fs_close(%d) = %d",c->GPR2,ret);
       break;
     case SYS_lseek: ret = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
       PRINT_TRACE(fs_lseek);
