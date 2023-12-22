@@ -42,6 +42,8 @@ void do_syscall(Context *c) {
       Log("fs_read(%d, %d, %d) = %d", c->GPR2,c->GPR3,c->GPR4,c->GPRx);break;
     case SYS_close: c->GPRx = fs_close(c->GPR2);
       Log("fs_close(%d) = %d",c->GPR2,c->GPRx);break;
+    case SYS_lseek: c->GPRx = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
+      Log("fs_lseek(%d,%d,%d) = %d",c->GPR2,(size_t)c->GPR3,c->GPR4,c->GPRx);break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   //c->GPRx = ret;
