@@ -25,6 +25,26 @@ size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
 
+
+#define time_t uint64_t
+#define suseconds_t uint64_t
+struct timeval {
+  time_t tv_sec;
+  suseconds_t tv_usec;
+};
+
+struct timezone {
+  int tz_minuteswest;
+  int tz_dsttime;
+};
+
+int sys_gettimeofday(struct timeval *tv,struct timezone *tz){
+  uint64_t us = io_read(AM_TIMER_UPTIME).us;
+  tv->tv_sec = us / 1000000;
+  tv->tv_usec = us % 1000000;
+  return 0;
+}
+
 #ifdef STRACE
 #define PRINT_TRACE(name) Log(#name "(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret)
 #else
@@ -59,6 +79,9 @@ void do_syscall(Context *c) {
     case SYS_lseek: ret = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
       PRINT_TRACE(fs_lseek);
       //Log("fs_lseek(%d,%d,%d) = %d",c->GPR2,(size_t)c->GPR3,c->GPR4,ret);
+      break;
+    case SYS_gettimeofday: ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3);
+      PRINT_TRACE(sys_gettimeofday);
       break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
