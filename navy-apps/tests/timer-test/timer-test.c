@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include <assert.h>
 #include <sys/select.h>
-#include <sys/time.h>
 #include <sys/types.h>
 
-int main(){
+#define TEST_NDL
+
+#ifndef TEST_NDL
+#include <sys/time.h>
+#include <assert.h>
+void test1() {
   struct timeval start;
   struct timeval now;
   assert(gettimeofday(&start,NULL) == 0);
@@ -22,4 +25,29 @@ int main(){
       times++;
     }
   }
+}
+#else
+#include <NDL.h>
+void test2(){
+  NDL_init(0);
+  uint32_t init = NDL_GetTicks();
+  int times = 1;
+
+  while(1) {
+    uint32_t now = NDL_GetTicks();
+    uin32_t time_gap = now - init;
+    if(time_gap > 500 * times) {
+      printf("NDL Test: Half a second to print %d times\n",times);
+      times++;
+    }
+  }
+}
+#endif
+
+int main(){
+#ifndef TEST_NDL
+  test1();
+#else
+  test2();
+#endif
 }
