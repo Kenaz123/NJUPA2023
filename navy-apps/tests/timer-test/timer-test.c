@@ -29,13 +29,13 @@ void test1() {
 #else
 #include <NDL.h>
 void test2(){
-  NDL_init(0);
+  NDL_Init(0);
   uint32_t init = NDL_GetTicks();
   int times = 1;
 
   while(1) {
     uint32_t now = NDL_GetTicks();
-    uin32_t time_gap = now - init;
+    uint32_t time_gap = now - init;
     if(time_gap > 500 * times) {
       printf("NDL Test: Half a second to print %d times\n",times);
       times++;
