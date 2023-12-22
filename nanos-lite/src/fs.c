@@ -22,6 +22,7 @@ typedef struct {
 } OFinfo;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
+size_t serial_write(const void *buf, size_t offset, size_t len);
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -36,8 +37,8 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, invalid_write},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, invalid_write},
+  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
+  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
 #include "files.h"
 };
 
@@ -76,10 +77,14 @@ static int get_open_index(int fd){
 }
 
 size_t fs_read(int fd, void *buf, size_t len){
-  if(fd <= 2){
+  ReadFn readfn = file_table[fd].read;
+  if(readfn != NULL){
+      return readfn(buf,0,len);
+    }
+  /*if(fd <= 2){
     Log("ignore reading %s",file_table[fd].name);
     return 0; 
-  }
+  }*/
   int target_read = get_open_index(fd);
   if(target_read == -1){
       Log("file %s not opened before read",file_table[fd].name);
@@ -102,12 +107,17 @@ size_t fs_write(int fd, const void *buf, size_t len){
     Log("ignore writing %s",file_table[fd].name);
     return 0; 
   }
-  if(fd == 1 || fd == 2){
+  WriteFn writefn = file_table[fd].write;
+  if(writefn != NULL) {
+    return writefn(buf,0,len);
+  }
+  /*if(fd == 1 || fd == 2){
     for(int i = 0; i < len; i++){
         putch(*((char*)buf + i));
     }
     return len;
   }//pay attention to Stdout and Stderr!!!
+  */
   int target_write = get_open_index(fd);
   if(target_write == -1){
       Log("file %s not opened before write",file_table[fd].name);
