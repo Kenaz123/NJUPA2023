@@ -28,25 +28,25 @@ int fs_close(int fd);
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
-  //intptr_t ret;
+  intptr_t ret;
   switch (a[0]) {
-    case SYS_exit: printf("SYS_exit\n");sys_exit(c->GPR2);c->GPRx = 0;break;//SYS_exit
-    case SYS_yield: printf("SYS_yield\n");yield();c->GPRx = 0;break;//SYS_yield
-    case SYS_write: c->GPRx = fs_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
-       Log("fs_write(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
-    case SYS_brk: c->GPRx = sys_brk((void *)c->GPR2);
-      Log("sys_brk(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, c->GPRx);break;
-    case SYS_open: c->GPRx = fs_open((const char *)c->GPR2,c->GPR3,c->GPR4);
-      Log("fs_open(%s, %d, %d) = %d", (const char *)c->GPR2,c->GPR3,c->GPR4,c->GPRx);break;
-    case SYS_read: c->GPRx = fs_read(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
-      Log("fs_read(%d, %d, %d) = %d", c->GPR2,c->GPR3,c->GPR4,c->GPRx);break;
-    case SYS_close: c->GPRx = fs_close(c->GPR2);
-      Log("fs_close(%d) = %d",c->GPR2,c->GPRx);break;
-    case SYS_lseek: c->GPRx = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
-      Log("fs_lseek(%d,%d,%d) = %d",c->GPR2,(size_t)c->GPR3,c->GPR4,c->GPRx);break;
+    case SYS_exit: printf("SYS_exit\n");sys_exit(c->GPR2);ret = 0;break;//SYS_exit
+    case SYS_yield: printf("SYS_yield\n");yield();ret = 0;break;//SYS_yield
+    case SYS_write: ret = fs_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
+       Log("fs_write(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);break;
+    case SYS_brk: ret = sys_brk((void *)c->GPR2);
+      Log("sys_brk(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);break;
+    case SYS_open: ret = fs_open((const char *)c->GPR2,c->GPR3,c->GPR4);
+      Log("fs_open(%s, %d, %d) = %d", (const char *)c->GPR2,c->GPR3,c->GPR4,ret);break;
+    case SYS_read: ret = fs_read(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
+      Log("fs_read(%d, %d, %d) = %d", c->GPR2,c->GPR3,c->GPR4,ret);break;
+    case SYS_close: ret = fs_close(c->GPR2);
+      Log("fs_close(%d) = %d",c->GPR2,ret);break;
+    case SYS_lseek: ret = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
+      Log("fs_lseek(%d,%d,%d) = %d",c->GPR2,(size_t)c->GPR3,c->GPR4,ret);break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
-  //c->GPRx = ret;
+  c->GPRx = ret;
 }
 
 
