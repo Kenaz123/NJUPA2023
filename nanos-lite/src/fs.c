@@ -56,7 +56,7 @@ int fs_open(const char *pathname, int flags, int mode){
     for(int i = 0; i < LENGTH(file_table); i++){
       if(strcmp(file_table[i].name,pathname)==0){
         if(i < FD_FB){
-          Log("ignore opening %s",pathname);
+          //Log("ignore opening %s",pathname);
           return i;
         }
         open_file_table[open_file_index].fd = i;
@@ -171,7 +171,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
 
 int fs_close(int fd){
   if(fd <= 2){
-      Log("ignore close %s",file_table[fd].name);
+      //Log("ignore close %s",file_table[fd].name);
       return 0;
   }
   int target_close = get_open_index(fd);
