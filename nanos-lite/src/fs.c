@@ -25,6 +25,7 @@ enum {FD_STDIN, FD_STDOUT, FD_STDERR, DEV_EVENTS, PROC_DISPINFO, FD_FB};
 size_t serial_write(const void *buf, size_t offset, size_t len);
 size_t events_read(void *buf, size_t offset, size_t len);
 size_t dispinfo_read(void *buf, size_t offset, size_t len);
+size_t fb_write(const void *buf, size_t offset, size_t len);
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -43,6 +44,7 @@ static Finfo file_table[] __attribute__((used)) = {
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [DEV_EVENTS] = {"/dev/events", 0, 0, events_read, invalid_write},
   [PROC_DISPINFO] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
+  [FD_FB] = {"/dev/fb", 0, 0, invalid_read, fb_write},
 #include "files.h"
 };
 
@@ -115,10 +117,10 @@ size_t fs_write(int fd, const void *buf, size_t len){
     Log("ignore writing %s",file_table[fd].name);
     return 0; 
   }
-  WriteFn writefn = file_table[fd].write;
-  if(writefn != NULL) {
-    return writefn(buf,0,len);
-  }
+  WriteFn writefn = file_table[fd].write ? file_table[fd].write : ramdisk_write;
+  // if(writefn != NULL && fd < FD_FB) {
+  //   return writefn(buf,0,len);
+  // }
   /*if(fd == 1 || fd == 2){
     for(int i = 0; i < len; i++){
         putch(*((char*)buf + i));
@@ -137,8 +139,9 @@ size_t fs_write(int fd, const void *buf, size_t len){
   size_t disk_offset = file_table[fd].disk_offset;
   if(cur_open_offset > size) return 0;
   if(cur_open_offset + len > size) write_byte = size - cur_open_offset;
-  ramdisk_write(buf, disk_offset+cur_open_offset, write_byte);
-  open_file_table[target_write].open_offset += write_byte;
+  writefn(buf,disk_offset+cur_open_offset,write_byte);
+  if(file_table[fd].size != 0)
+    open_file_table[target_write].open_offset += write_byte;
   return write_byte;
 }
 
