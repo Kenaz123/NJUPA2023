@@ -76,7 +76,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     lseek(fd,((y + canvas_y + i) * screen_w + canvas_x + x) * 4,SEEK_SET);
     write(fd,pixels + i * w,((w + x < canvas_w) ? w : (canvas_w - x))*4);
   }
-  assert(close(fd) == 0);
+  //assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
