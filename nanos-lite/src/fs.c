@@ -129,10 +129,10 @@ size_t fs_write(int fd, const void *buf, size_t len){
   }//pay attention to Stdout and Stderr!!!
   */
   int target_write = get_open_index(fd);
-  if(target_write == -1){
+  /*if(target_write == -1){
       Log("file %s not opened before write",file_table[fd].name);
       return -1;
-  }
+  }*/
   size_t write_byte = len;
   size_t cur_open_offset = open_file_table[target_write].open_offset;
   size_t size = file_table[fd].size;
