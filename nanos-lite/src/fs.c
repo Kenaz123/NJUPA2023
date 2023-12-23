@@ -151,10 +151,10 @@ size_t fs_lseek(int fd, size_t offset, int whence){
       return 0; 
   }
   int target_lseek = get_open_index(fd);
-  if(target_lseek == -1){
+  /*if(target_lseek == -1){
       Log("file %s not opened before lseek",file_table[fd].name);
       return (long int)-1;
-  }
+  }*/
   size_t new_offset = -1;
   size_t size = file_table[fd].size;
   size_t open_offset = open_file_table[target_lseek].open_offset;
