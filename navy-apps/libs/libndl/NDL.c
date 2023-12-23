@@ -11,6 +11,8 @@
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+static int canvas_w = 0, canvas_h = 0;
+static int canvas_x = 0, canvas_y = 0;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -21,7 +23,7 @@ uint32_t NDL_GetTicks() {
 int NDL_PollEvent(char *buf, int len) {
   int fd = open("/dev/events", 0, 0);
   int ret = read(fd, buf, len);
-  assert(close(fd) == 0);
+  //assert(close(fd) == 0);
   return ret == 0 ? 0 : 1;
 }
 
@@ -43,6 +45,29 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
+  int buf_size = 1024;
+  char *buf = (char *)malloc(buf_size * sizeof(char));
+  int fd = open("/proc/dispinfo", 0, 0);
+  int ret = read(fd, buf, buf_size);
+  //assert(ret < buf_size);
+  assert(close(fd) == 0);
+  
+  //int i = 0;
+  assert(strncmp(buf,"WIDTH",5) == 0);
+  int width = 0, height = 0;
+  sscanf(buf,"WIDTH: %d\nHEIGHT: %d",&width,&height);
+  free(buf);
+  screen_w = width;
+  screen_h = height;
+  if(*w == 0 && *h == 0){
+    *w = screen_w;
+    *h = screen_h;
+  }
+  canvas_w = *w;
+  canvas_h = *h;
+  canvas_x = (screen_w - canvas_w)/2;
+  canvas_y = (screen_h - canvas_h)/2;
+  printf("WIDTH: %d\nHEIGHT: %d",canvas_w,canvas_h);
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {

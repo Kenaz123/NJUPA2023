@@ -1,7 +1,9 @@
 //#include "amdev.h"
 #include "am.h"
+#include "amdev.h"
 #include "klib-macros.h"
 #include <common.h>
+#include <stdio.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
@@ -11,7 +13,7 @@
 
 #define NAME(key) \
   [AM_KEY_##key] = #key,
-#define TEMP_BUFSIZE 32
+#define TEMP_BUFSIZE 64
 static char temp_buf[TEMP_BUFSIZE];
 
 static const char *keyname[256] __attribute__((used)) = {
@@ -40,7 +42,18 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  memset(temp_buf,0,TEMP_BUFSIZE);
+  AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
+  int width = ev.width;
+  int height = ev.height;
+  int ret = sprintf(temp_buf, "WIDTH : %d\nHEIGHT : %d",width,height);
+  if(ret >= len){
+    strncpy(buf,temp_buf,len-1);
+    ret = len;
+  } else {
+    strncpy(buf,temp_buf,ret);
+  }
+  return ret;
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
