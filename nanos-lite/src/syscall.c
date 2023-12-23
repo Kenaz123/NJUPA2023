@@ -26,7 +26,7 @@ size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
 
 
-#define time_t uint64_t
+/*#define time_t uint64_t
 #define suseconds_t uint64_t
 struct timeval {
   time_t tv_sec;
@@ -36,8 +36,8 @@ struct timeval {
 struct timezone {
   int tz_minuteswest;
   int tz_dsttime;
-};
-
+};*/
+#include <sys/time.h>
 int sys_gettimeofday(struct timeval *tv,struct timezone *tz){
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
   tv->tv_sec = us / 1000000;

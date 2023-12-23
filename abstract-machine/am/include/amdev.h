@@ -2,6 +2,14 @@
 #define __AMDEV_H__
 
 // **MAY SUBJECT TO CHANGE IN THE FUTURE**
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+/*typedef struct {
+  void *start, *end;
+} Area;*/
 
 #define AM_DEVREG(id, reg, perm, ...) \
   enum { AM_##reg = (id) }; \

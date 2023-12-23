@@ -1,3 +1,6 @@
+//#include "amdev.h"
+#include "am.h"
+#include "klib-macros.h"
 #include <common.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
@@ -8,6 +11,8 @@
 
 #define NAME(key) \
   [AM_KEY_##key] = #key,
+#define TEMP_BUFSIZE 32
+static char temp_buf[TEMP_BUFSIZE];
 
 static const char *keyname[256] __attribute__((used)) = {
   [AM_KEY_NONE] = "NONE",
@@ -20,7 +25,18 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  memset(temp_buf,0,TEMP_BUFSIZE);
+  AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
+  if(ev.keycode == AM_KEY_NONE) return 0;
+  const char *name = keyname[ev.keycode];
+  int ret = ev.keydown ? sprintf(temp_buf,"kd %s\n",name) : sprintf(temp_buf,"ku %s\n",name);
+  if(ret >= len){
+    strncpy(buf,temp_buf,len-1);
+    ret = len;
+  } else {
+    strncpy(buf,temp_buf,ret);
+  }
+  return ret;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
