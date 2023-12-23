@@ -51,6 +51,10 @@ static size_t open_file_index = 0;
 
 
 void init_fs() {
+  AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
+  int width = ev.width;
+  int height = ev.height;
+  file_table[FD_FB].size = width * height * sizeof(uint32_t);
   // TODO: initialize the size of /dev/fb
 }
 
