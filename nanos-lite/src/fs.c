@@ -182,6 +182,6 @@ int fs_close(int fd){
       open_file_index--;
       return 0;
   }
-  Log("file not opened before close");
+  //Log("file not opened before close");
   return 0;
 }
