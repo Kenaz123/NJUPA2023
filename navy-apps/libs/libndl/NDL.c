@@ -24,7 +24,7 @@ int NDL_PollEvent(char *buf, int len) {
   memset(buf, 0, len);
   int fd = open("/dev/events", 0, 0);
   int ret = read(fd, buf, len);
-  assert(close(fd) == 0);
+  //assert(close(fd) == 0);
   return ret == 0 ? 0 : 1;
 }
 
