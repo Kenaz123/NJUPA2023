@@ -160,8 +160,8 @@ size_t fs_lseek(int fd, size_t offset, int whence){
   size_t open_offset = open_file_table[target_lseek].open_offset;
   switch(whence) {
       case SEEK_SET:
-        if(offset>size) new_offset = size;
-        new_offset = offset;break;
+        if(offset>size) {new_offset = size;}else{
+        new_offset = offset;}break;
       case SEEK_CUR:
         if(offset+open_offset>size) new_offset=size;
         new_offset = offset + open_offset;break;
