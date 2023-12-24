@@ -116,7 +116,7 @@ size_t fs_read(int fd, void *buf, size_t len){
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
-  if(fd == 0 || fd == 3 || fd ==4){
+  if(fd == 0 || fd == 3 || fd == 4){
     Log("ignore writing %s",file_table[fd].name);
     return 0; 
   }
