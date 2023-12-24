@@ -173,6 +173,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
   if(new_offset<0||new_offset>size){
       printf("fd: %d\n",fd);
       printf("open_offset: %d\n",open_offset);
+      printf("size: %d\n",size);
       printf("Wrong:offset = %d\n",new_offset);
       assert(0);
       //Log("Seek position out of bounds");
