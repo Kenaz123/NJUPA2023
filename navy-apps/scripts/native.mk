@@ -1,5 +1,5 @@
 LD = $(CXX)
-
+#CFLAGS += -fpie -g
 ### Run an application with $(ISA)=native
 
 env:
