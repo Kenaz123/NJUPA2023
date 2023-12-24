@@ -171,7 +171,8 @@ size_t fs_lseek(int fd, size_t offset, int whence){
       default:panic("Failure during fs_lseek : unhandled whence %d",whence);
   }
   if(new_offset<0||new_offset>size){
-      printf("Wrong:offset = %d",new_offset);
+      printf("fd: %d\n",fd);
+      printf("Wrong:offset = %d\n",new_offset);
       assert(0);
       //Log("Seek position out of bounds");
       return -1;
