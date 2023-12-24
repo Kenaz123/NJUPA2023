@@ -1,7 +1,7 @@
 #include <NDL.h>
 #include <SDL.h>
 //#include <SDL2/SDL_events.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <string.h>
 
 #define keyname(k) #k,
