@@ -59,7 +59,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   assert(strncmp(buf,"WIDTH",5) == 0);
   int width = 0, height = 0;
   sscanf(buf,"WIDTH: %d\nHEIGHT: %d",&width,&height);
-  printf("%s\n", buf);
+  //printf("%s\n", buf);
   free(buf);
   screen_w = width;
   screen_h = height;
