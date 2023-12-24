@@ -161,13 +161,16 @@ size_t fs_lseek(int fd, size_t offset, int whence){
   switch(whence) {
       case SEEK_SET:
         if(offset>size) new_offset = size;
-        new_offset = offset;break;
+        else new_offset = offset;
+        break;
       case SEEK_CUR:
         if(offset+open_offset>size) new_offset=size;
-        new_offset = offset + open_offset;break;
+        else new_offset = offset + open_offset;
+        break;
       case SEEK_END:
         if(offset+size>size) new_offset = size;
-        new_offset = offset + size;break;
+        else new_offset = offset + size;
+        break;
       default:panic("Failure during fs_lseek : unhandled whence %d",whence);
   }
   if(new_offset<0||new_offset>size){
