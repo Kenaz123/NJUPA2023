@@ -17,7 +17,8 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 int SDL_PollEvent(SDL_Event *ev) {
   int buf_size = 32;
-  char *buf = (char *)malloc(buf_size * sizeof(char));
+  //char *buf = (char *)malloc(buf_size * sizeof(char));
+  char buf[buf_size];
   if(NDL_PollEvent(buf, buf_size) == 1) {
     if(strncmp(buf,"kd",2) == 0){
       ev->key.type = SDL_KEYDOWN;
@@ -35,13 +36,13 @@ int SDL_PollEvent(SDL_Event *ev) {
   }
   //assert(flag == 1);
 
-  free(buf);
+  //free(buf);
   return 1;
 
   } else {
     ev->key.type = SDL_USEREVENT;
     ev->key.keysym.sym = 0;
-    free(buf);
+    //free(buf);
     return 0;
   }
 }
