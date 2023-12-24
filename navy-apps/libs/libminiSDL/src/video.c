@@ -9,18 +9,24 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  dstrect->x = !dstrect ? 0 : dstrect->x;
+  dstrect->y = !dstrect ? 0 : dstrect->y;
   if(srcrect == NULL) {
-    assert(src->w <= (dst->w - dstrect->x));
-    assert(src->h <= (dst->h - dstrect->y));
-    for(int i = 0; i < src->w; i++){
-      for(int j = 0; j < src->h; j++){
+    //assert(src->w <= (dst->w - dstrect->x));
+    //assert(src->h <= (dst->h - dstrect->y));
+    int width = src->w < (dst->w - dstrect->x) ? src->w : (dst->w - dstrect->x);
+    int height = src->h < (dst->h - dstrect->y) ? src->h : (dst->h - dstrect->y);
+    for(int i = 0; i < width; i++){
+      for(int j = 0; j < height; j++){
         ((uint32_t *)dst->pixels)[(dstrect->y + j) * dst->w + dstrect->x + i] = ((uint32_t *)src->pixels)[j * src->w + i];
       }
     }
     return;
     } else {
-    for(int i = 0; i < srcrect->w; i++){
-      for(int j = 0; j < srcrect->h; j++){
+    int width = srcrect->w < (dst->w - dstrect->x) ? srcrect->w : (dst->w - dstrect->x);
+    int height = srcrect->h < (dst->h - dstrect->y) ? srcrect->h : (dst->h - dstrect->y);
+    for(int i = 0; i < width; i++){
+      for(int j = 0; j < height; j++){
         ((uint32_t *)dst->pixels)[(dstrect->y + j) * dst->w + dstrect->x + i] = ((uint32_t *)src->pixels)[(srcrect->y + j) * src->w + srcrect->x + i];
       }
     }
