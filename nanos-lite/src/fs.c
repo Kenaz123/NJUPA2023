@@ -171,7 +171,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
       default:panic("Failure during fs_lseek : unhandled whence %d",whence);
   }
   if(new_offset<0||new_offset>size){
-      Log("Seek position out of bounds");
+      //Log("Seek position out of bounds");
       return -1;
     }
   open_file_table[target_lseek].open_offset = new_offset;
