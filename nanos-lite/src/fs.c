@@ -121,9 +121,9 @@ size_t fs_write(int fd, const void *buf, size_t len){
     return 0; 
   }
   WriteFn writefn = file_table[fd].write ? file_table[fd].write : ramdisk_write;
-  // if(writefn != NULL && fd < FD_FB) {
-  //   return writefn(buf,0,len);
-  // }
+  if(writefn != NULL && fd < FD_FB) {
+     return writefn(buf,0,len);
+   }
   /*if(fd == 1 || fd == 2){
     for(int i = 0; i < len; i++){
         putch(*((char*)buf + i));
