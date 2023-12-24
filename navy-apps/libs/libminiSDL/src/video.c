@@ -1,4 +1,5 @@
 #include <NDL.h>
+//#include <cstdint>
 #include <sdl-video.h>
 #include <assert.h>
 #include <stdint.h>
@@ -13,14 +14,14 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     assert(src->h <= (dst->h - dstrect->y));
     for(int i = 0; i < src->w; i++){
       for(int j = 0; j < src->h; j++){
-        dst->pixels[(dstrect->y + j) * dst->w + dstrect->x + i] = src->pixels[j * src->w + i];
+        ((uint32_t *)dst->pixels)[(dstrect->y + j) * dst->w + dstrect->x + i] = ((uint32_t *)src->pixels)[j * src->w + i];
       }
     }
     return;
     } else {
     for(int i = 0; i < srcrect->w; i++){
       for(int j = 0; j < srcrect->h; j++){
-        dst->pixels[(dstrect->y + j) * dst->w + dstrect->x + i] = src->pixels[(srcrect->y + j) * src->w + srcrect->x + i];
+        ((uint32_t *)dst->pixels)[(dstrect->y + j) * dst->w + dstrect->x + i] = ((uint32_t *)src->pixels)[(srcrect->y + j) * src->w + srcrect->x + i];
       }
     }
     return;
@@ -30,7 +31,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   if(dstrect == NULL){
     for(int i = 0; i < dst->w * dst->h; i++) {
-      dst->pixels[i] = color;
+      ((uint32_t *)dst->pixels)[i] = color;
     }
     return;
   }
@@ -38,7 +39,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   int rect_w = (dstrect->w < (dst->w - dstrect->x)) ? dstrect->w : (dst->w - dstrect->x);
   for(int i = 0; i < rect_w; i++){
     for(int j = 0; j < rect_h; j++){
-      dst->pixels[(dstrect->y + j) * dst->w + dstrect->x + i] = color;
+      ((uint32_t *)dst->pixels)[(dstrect->y + j) * dst->w + dstrect->x + i] = color;
     }
   }
   return;
