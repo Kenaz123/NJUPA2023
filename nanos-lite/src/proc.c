@@ -24,7 +24,7 @@ void hello_fun(void *arg) {
 void init_proc() {
   switch_boot_pcb();
   Log("Initializing processes...");
-  const char filename[] = "/bin/file-test";
+  const char filename[] = "/bin/bmp-test";
   naive_uload(NULL,filename);
   // load program here
 
