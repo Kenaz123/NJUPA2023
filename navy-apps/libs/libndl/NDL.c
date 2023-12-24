@@ -48,7 +48,7 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
-  int buf_size = 1024;
+  int buf_size = 64;
   char *buf = (char *)malloc(buf_size * sizeof(char));
   int fd = open("/proc/dispinfo", 0, 0);
   int ret = read(fd, buf, buf_size);
@@ -59,6 +59,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   assert(strncmp(buf,"WIDTH",5) == 0);
   int width = 0, height = 0;
   sscanf(buf,"WIDTH: %d\nHEIGHT: %d",&width,&height);
+  printf("%s\n", buf);
   free(buf);
   screen_w = width;
   screen_h = height;
@@ -70,13 +71,14 @@ void NDL_OpenCanvas(int *w, int *h) {
   canvas_h = *h;
   canvas_x = (screen_w - canvas_w)/2;
   canvas_y = (screen_h - canvas_h)/2;
-  //printf("WIDTH: %d\nHEIGHT: %d",canvas_w,canvas_h);
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   int fd = open("/dev/fb", 0, 0);
-  //printf("canvas_w: %d\ncanvas_h: %d\n",canvas_w,canvas_h);
+  // printf("canvas_w: %d\ncanvas_h: %d\n",canvas_w,canvas_h);
   for(int i = 0; i < h && y + i < canvas_h; i++){
+  printf("%d %d %d %d\n",canvas_y,canvas_x,screen_w , x);
+  // printf("%d\n",((y + canvas_y + i) * screen_w + canvas_x + x) * 4);
     lseek(fd,((y + canvas_y + i) * screen_w + canvas_x + x) * 4,SEEK_SET);
     write(fd,pixels + i * w,((w + x < canvas_w) ? w : (canvas_w - x))*4);
   }

@@ -163,16 +163,19 @@ size_t fs_lseek(int fd, size_t offset, int whence){
   size_t open_offset = file_table[fd].open_offset;
   switch(whence) {
       case SEEK_SET:
-        if(offset>size) new_offset = size;
-        else new_offset = offset;
+        // if(offset>size) new_offset = size;
+        // else new_offset = offset;
+        new_offset = offset;
         break;
       case SEEK_CUR:
-        if(offset+open_offset>size) new_offset=size;
-        else new_offset = offset + open_offset;
+        // if(offset+open_offset>size) new_offset=size;
+        // else new_offset = offset + open_offset;
+        new_offset = offset + open_offset;
         break;
       case SEEK_END:
-        if(offset+size>size) new_offset = size;
-        else new_offset = offset + size;
+        // if(offset+size>size) new_offset = size;
+        // else new_offset = offset + size;
+        new_offset = offset + size;
         break;
       default:panic("Failure during fs_lseek : unhandled whence %d",whence);
   }
