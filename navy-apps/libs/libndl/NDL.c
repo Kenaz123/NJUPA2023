@@ -20,8 +20,10 @@ uint32_t NDL_GetTicks() {
   return (tv.tv_sec*1000 + tv.tv_usec / 1000);
 }
 
+//static int event_fd = 0;
+
 int NDL_PollEvent(char *buf, int len) {
-  memset(buf, 0, len);
+  //memset(buf, 0, len);
   int fd = open("/dev/events", 0, 0);
   int ret = read(fd, buf, len);
   //assert(close(fd) == 0);
@@ -98,6 +100,7 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  //event_fd = open("dev/events", 0, 0);
   return 0;
 }
 
