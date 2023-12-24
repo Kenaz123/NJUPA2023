@@ -45,8 +45,8 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-  SDL_PollEvent(event);
-  /*int buf_size = 32;
+  //SDL_PollEvent(event);
+  int buf_size = 32;
   char *buf = (char *)malloc(buf_size * sizeof(char));
   while(NDL_PollEvent(buf,buf_size) == 0);
   //if(NDL_PollEvent(buf, buf_size) == 1) {
@@ -56,17 +56,17 @@ int SDL_WaitEvent(SDL_Event *event) {
       event->key.type = SDL_KEYUP;
     }
   
-  int flag = 0;
+  //int flag = 0;
   for(int i = 0; i < sizeof(keyname) / sizeof(keyname[0]); i++){
     if(strncmp(buf + 3, keyname[i],strlen(buf) - 4) == 0 && strlen(keyname[i]) == strlen(buf) - 4) {
-      flag = 1;
+      //flag = 1;
       event->key.keysym.sym = i;
       break;
     }
   }
-  assert(flag == 1);
+  //assert(flag == 1);
   
-  free(buf);*/
+  free(buf);
   return 1;
   
 }
