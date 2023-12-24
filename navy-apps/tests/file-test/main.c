@@ -2,8 +2,8 @@
 #include <assert.h>
 
 int main() {
-  printf("haha\n");
-  return 0;
+  //printf("haha\n");
+  //return 0;
   FILE *fp = fopen("/share/files/num", "r+");
   assert(fp);
 
