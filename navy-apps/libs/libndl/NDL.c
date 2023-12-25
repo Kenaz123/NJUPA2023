@@ -13,11 +13,12 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 static int canvas_w = 0, canvas_h = 0;
 static int canvas_x = 0, canvas_y = 0;
+static uint32_t start_time;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
   assert(gettimeofday(&tv, NULL) == 0);
-  return (tv.tv_sec*1000 + tv.tv_usec / 1000);
+  return (tv.tv_sec*1000 + tv.tv_usec / 1000) - start_time;
 }
 
 //static int event_fd = 0;
@@ -103,6 +104,10 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  struct timeval tv;
+  assert(gettimeofday(&tv, NULL) == 0);
+  start_time = tv.tv_usec /1000 + tv.tv_sec*1000;
+  
   //event_fd = open("dev/events", 0, 0);
   return 0;
 }

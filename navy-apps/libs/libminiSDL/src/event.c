@@ -85,8 +85,8 @@ int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
   return 0;
 }
 
-static unsigned char keystate[sizeof(keyname)/sizeof(keyname[0])];
-
+//static unsigned char keystate[sizeof(keyname)/sizeof(keyname[0])];
+static uint8_t keystate[sizeof(keyname)/sizeof(keyname[0])];
 uint8_t* SDL_GetKeyState(int *numkeys) {
   SDL_Event ev;
   memset(keystate, 0, sizeof(keystate));
