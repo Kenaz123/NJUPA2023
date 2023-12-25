@@ -109,7 +109,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     NDL_DrawRect((uint32_t *)s->pixels,x,y,s->w,s->h);
     return;
   }
-  NDL_DrawRect((uint32_t *)s->pixels,x,y,w,h);
+  NDL_DrawRect((uint32_t *)s->pixels,x,y,w,h);//pay attention: if x or y = 0,we need to change the pixels index
   } else {//8 bits
     int W,H;
     if(x == 0 && y == 0 && w == 0 && h == 0) {
