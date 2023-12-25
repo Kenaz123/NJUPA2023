@@ -3,6 +3,7 @@
 #include <SDL.h>
 //#include <SDL2/SDL_events.h>
 //#include <stdlib.h>
+//#include <SDL2/SDL_events.h>
 #include <string.h>
 
 #define keyname(k) #k,
@@ -11,6 +12,8 @@ static const char *keyname[] = {
   "NONE",
   _KEYS(keyname)
 };
+
+static uint8_t keystate[sizeof(keyname)/sizeof(keyname[0])];
 
 int SDL_PushEvent(SDL_Event *ev) {
   return 0;
@@ -36,7 +39,11 @@ int SDL_PollEvent(SDL_Event *ev) {
     }
   }
   //assert(flag == 1);
-
+  if(ev->key.type == SDL_KEYDOWN){
+  keystate[ev->key.keysym.sym] = 1;
+    } else {
+      keystate[ev->key.keysym.sym] = 0;
+    }
   //free(buf);
   return 1;
 
@@ -86,14 +93,15 @@ int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
 }
 
 //static unsigned char keystate[sizeof(keyname)/sizeof(keyname[0])];
-static uint8_t keystate[sizeof(keyname)/sizeof(keyname[0])];
+
 uint8_t* SDL_GetKeyState(int *numkeys) {
-  SDL_Event ev;
+  /*SDL_Event ev;
   memset(keystate, 0, sizeof(keystate));
   if(SDL_PollEvent(&ev) == 1 && ev.key.type == SDL_KEYDOWN){
     keystate[ev.key.keysym.sym] = 1;
   } else {
     //memset(keystate, 0, sizeof(keystate));
-  }
+  }*/
+  if(numkeys) *numkeys = 83;
   return keystate;
 }
