@@ -89,10 +89,11 @@ static unsigned char keystate[sizeof(keyname)/sizeof(keyname[0])];
 
 uint8_t* SDL_GetKeyState(int *numkeys) {
   SDL_Event ev;
+  memset(keystate, 0, sizeof(keystate));
   if(SDL_PollEvent(&ev) == 1 && ev.key.type == SDL_KEYDOWN){
     keystate[ev.key.keysym.sym] = 1;
   } else {
-    memset(keystate, 0, sizeof(keystate));
+    //memset(keystate, 0, sizeof(keystate));
   }
   return keystate;
 }
