@@ -29,7 +29,7 @@ int SDL_PollEvent(SDL_Event *ev) {
   
   //int flag = 0;
   for(int i = 0; i < sizeof(keyname) / sizeof(keyname[0]); i++){
-    if(strncmp(buf + 3, keyname[i],strlen(buf) - 4) == 0 && strlen(keyname[i]) == strlen(buf) - 4) {
+    if(strncmp(buf + 3, keyname[i],strlen(buf) - 4) == 0 /*&& strlen(keyname[i]) == strlen(buf) - 4*/) {
       //flag = 1;
       ev->key.keysym.sym = i;
       break;
