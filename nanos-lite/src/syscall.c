@@ -11,13 +11,20 @@
   }
   return -1;
 }*/
+void naive_uload(PCB *pcb, const char *filename);
 
 int sys_brk(void *addr){
   return 0;
 }
 
+int sys_execve(const char *fname) {
+  naive_uload(NULL,fname);
+  return -1;
+}
+
 void sys_exit(int status){
-  halt(status);
+  //halt(status);
+  sys_execve("/bin/menu");
 }
 
 int fs_open(const char *pathname, int flags, int mode);
@@ -25,7 +32,7 @@ size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
-void naive_uload(PCB *pcb, const char *filename); 
+
 
 /*#define time_t uint64_t
 #define suseconds_t uint64_t
@@ -46,10 +53,6 @@ int sys_gettimeofday(struct timeval *tv,struct timezone *tz){
   return 0;
 }
 
-int sys_execve(const char *fname) {
-  naive_uload(NULL,fname);
-  return -1;
-}
 
 #ifdef STRACE
 #define PRINT_TRACE(name) Log(#name "(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret)
