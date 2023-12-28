@@ -1,5 +1,6 @@
 #include <common.h>
 #include "syscall.h"
+#include <proc.h>//newly added
 // #define STRACE
 /*int sys_write(int fd,void *buf,size_t count){
   if(fd == 1 || fd == 2){
@@ -24,7 +25,7 @@ size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
-
+void naive_uload(PCB *pcb, const char *filename); 
 
 /*#define time_t uint64_t
 #define suseconds_t uint64_t
@@ -43,6 +44,11 @@ int sys_gettimeofday(struct timeval *tv,struct timezone *tz){
   tv->tv_sec = us / 1000000;
   tv->tv_usec = us % 1000000;
   return 0;
+}
+
+int sys_execve(const char *fname) {
+  naive_uload(NULL,fname);
+  return -1;
 }
 
 #ifdef STRACE
@@ -84,6 +90,9 @@ void do_syscall(Context *c) {
       PRINT_TRACE(sys_gettimeofday);
       break;
     default: panic("Unhandled syscall ID = %d", a[0]);
+    case SYS_execve: ret = sys_execve((const char *)c->GPR2);
+      PRINT_TRACE(sys_execve);
+      while(1);
   }
   c->GPRx = ret;
 }
