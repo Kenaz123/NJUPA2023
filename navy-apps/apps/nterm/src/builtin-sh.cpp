@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <SDL.h>
+#include <string.h>//newly added
 
 char handle_key(SDL_Event *ev);
 
@@ -22,13 +23,27 @@ static void sh_prompt() {
   sh_printf("sh> ");
 }
 
+static char fname[64];
 static void sh_handle_cmd(const char *cmd) {
+  if (cmd == NULL) return;
+  if (strncmp(cmd, "echo", 4) == 0) {
+    if(strlen(cmd) == 5) sh_printf("\n");
+    else sh_printf("%s",cmd + 5);
+  } else {
+    if(strlen(cmd) > 64) {
+      sh_printf("command too long\n");
+      return;
+    }
+    memset(fname, 0, 64);
+    strncpy(fname, cmd, strlen(cmd) - 1);//remove line break
+    execvp(fname, NULL);
+  }
 }
 
 void builtin_sh_run() {
   sh_banner();
   sh_prompt();
-
+  assert(setenv("PATH","/bin", 0) == 0);
   while (1) {
     SDL_Event ev;
     if (SDL_PollEvent(&ev)) {

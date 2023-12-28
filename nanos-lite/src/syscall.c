@@ -24,7 +24,7 @@ int sys_execve(const char *fname) {
 
 void sys_exit(int status){
   //halt(status);
-  sys_execve("/bin/menu");
+  sys_execve("/bin/nterm");
 }
 
 int fs_open(const char *pathname, int flags, int mode);
