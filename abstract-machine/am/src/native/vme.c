@@ -129,8 +129,9 @@ Context* ucontext(AddrSpace *as, Area kstack, void *entry) {
 
   int ret = sigemptyset(&(c->uc.uc_sigmask)); // enable interrupt
   assert(ret == 0);
+  if(as!=NULL){
   c->vm_head = as->ptr;
-
+  }
   c->ksp = (uintptr_t)kstack.end;
 
   return c;
