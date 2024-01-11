@@ -1,3 +1,4 @@
+#include "memory.h"
 #include <proc.h>
 #include <elf.h>
 #include <stdint.h>
@@ -43,7 +44,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     uint32_t p_offset = elf.e_phoff + i*elf.e_phentsize;
     printf("p_offset: %d\n",p_offset);
     fs_lseek(fd,p_offset,0);
-    fs_read(fd,&phdr,elf.e_phentsize);
+    fs_read(fd,&phdr,sizeof(Elf_Phdr));
     //assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
     if(phdr.p_type == PT_LOAD){
       char *buffer = (char *)malloc(phdr.p_filesz * sizeof(char) + 1);
@@ -73,13 +74,70 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
   pcb->cp = kcontext(stack, entry, arg);
 }
 
-void context_uload(PCB *pcb, const char *filename) {
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
   uintptr_t entry = loader(pcb, filename);
   Area stack;
-  uint8_t *end = heap.end;
-  stack.end = end;
-  stack.start = end - STACK_SIZE;
+  stack.start = pcb->stack;
+  stack.end = pcb->stack + STACK_SIZE;
+  //uint8_t *end = heap.end;
+  //stack.end = end;
+  //stack.start = end - STACK_SIZE;
   pcb->cp = ucontext(NULL, stack, (void(*)()) entry);
-  pcb->cp->GPRx = (uintptr_t)heap.end;
+  //pcb->cp->GPRx = (uintptr_t)heap.end;
+  void *ustack_end = new_page(8);
+  int space_count = 0;
+  int argc = 0;
+  if(argv) while(argv[argc]){
+    argc++;
+  }
+  space_count += sizeof(uintptr_t);
+  space_count += sizeof(uintptr_t) * (argc + 1);
+  if(argv) for(int i = 0; i < argc; ++i) space_count += (strlen(argv[i])+1);
+
+  int envpc = 0;
+  if(envp) while(envp[envpc]) envpc++;
+  space_count += sizeof(uintptr_t) * (envpc + 1);
+  if(envp) for(int i = 0; i < envpc; ++i) space_count += (strlen(envp[i]) + 1);
+
+  space_count += sizeof(uintptr_t);
+  uintptr_t *base = (uintptr_t *)ROUNDUP(ustack_end - space_count,sizeof(uintptr_t));
+  uintptr_t *base_mem = base;
+  *base = argc;
+  base += 1;
+
+  char *argv_tmp[argc];
+  char *envp_tmp[envpc];
+  base += (argc + 1) + (envpc + 1);
+  char *string_area = (char *)base;
+  uintptr_t *string_area_mem = (uintptr_t *)string_area;
+  for(int i = 0; i < argc; i++){
+    strcpy(string_area, argv[i]);
+    argv_tmp[i] = string_area;
+    string_area += (strlen(argv[i])+1);
+  }
+
+  for(int i = 0; i < envpc; i++){
+    strcpy(string_area,envp[i]);
+    envp_tmp[i] = string_area;
+    string_area += (strlen(envp[i])+1);
+  }
+  base -= (argc + 1) + (envpc + 1);
+  
+  for(int i = 0; i < argc; i++){
+    *base = (uintptr_t)argv_tmp[i];
+    base += 1;
+  }
+  *base = (uintptr_t)NULL;
+  base += 1;
+  for(int i = 0; i < envpc; i++){
+    *base = (uintptr_t)envp_tmp[i];
+    base += 1;
+  }
+  *base = (uintptr_t)NULL;
+  base += 1;
+  assert(string_area_mem == base);
+  pcb->cp->GPRx = (uintptr_t)base_mem;
+
+
 }
 
