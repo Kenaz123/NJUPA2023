@@ -10,9 +10,6 @@
 # define Elf_Phdr Elf32_Phdr
 #endif
 
-#ifdef __ISA_AM_NATIVE__
-# define EXPECT_TYPE EM_X86_64
-#endif
 
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 int fs_open(const char *pathname, int flags, int mode);
@@ -46,7 +43,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     uint32_t p_offset = elf.e_phoff + i*elf.e_phentsize;
     printf("p_offset: %d\n",p_offset);
     fs_lseek(fd,p_offset,0);
-    fs_read(fd,&phdr,sizeof(Elf_Phdr));
+    fs_read(fd,&phdr,elf.e_phentsize);
     //assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
     if(phdr.p_type == PT_LOAD){
       char *buffer = (char *)malloc(phdr.p_filesz * sizeof(char) + 1);
