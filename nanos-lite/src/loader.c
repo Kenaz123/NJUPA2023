@@ -10,6 +10,9 @@
 # define Elf_Phdr Elf32_Phdr
 #endif
 
+#ifdef __ISA_AM_NATIVE__
+# define EXPECT_TYPE EM_X86_64
+#endif
 
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 int fs_open(const char *pathname, int flags, int mode);
