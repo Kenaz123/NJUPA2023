@@ -3,7 +3,9 @@
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-  return NULL;
+  pf += nr_page * PGSIZE;
+  Log("ustack.end: %p", pf);
+  return pf;
 }
 
 #ifdef HAS_VME

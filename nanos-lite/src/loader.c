@@ -44,7 +44,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     uint32_t p_offset = elf.e_phoff + i*elf.e_phentsize;
     printf("p_offset: %d\n",p_offset);
     fs_lseek(fd,p_offset,0);
-    fs_read(fd,&phdr,elf.e_phentsize);
+    fs_read(fd,&phdr,elf.e_phentsize);//sizeof(Elf_Phdr)
     //assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
     if(phdr.p_type == PT_LOAD){
       char *buffer = (char *)malloc(phdr.p_filesz * sizeof(char) + 1);
