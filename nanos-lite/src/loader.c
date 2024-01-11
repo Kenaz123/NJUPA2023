@@ -41,12 +41,13 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   for(int i = 0; i < elf.e_phnum; i++){
     Elf_Phdr phdr;
     uint32_t p_offset = elf.e_phoff + i*elf.e_phentsize;
-    //printf("p_offset: %d\n",p_offset);
+    printf("p_offset: %d\n",p_offset);
     fs_lseek(fd,p_offset,0);
     fs_read(fd,&phdr,sizeof(Elf_Phdr));
     //assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
     if(phdr.p_type == PT_LOAD){
       char *buffer = (char *)malloc(phdr.p_filesz * sizeof(char) + 1);
+      //printf("phdr_p_offset:%d\n",phdr.p_offset);
       fs_lseek(fd,phdr.p_offset,0);
       fs_read(fd,buffer,phdr.p_filesz);
       memcpy((void*)(uintptr_t)phdr.p_vaddr,buffer,phdr.p_filesz);
