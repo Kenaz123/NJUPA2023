@@ -37,18 +37,20 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       memset((void *)(phdr[i].p_vaddr+phdr[i].p_filesz),0,phdr[i].p_memsz-phdr[i].p_filesz);
     }
   }*/
-  Elf_Phdr phdr;
+  //Elf_Phdr phdr;
   for(int i = 0; i < elf.e_phnum; i++){
+    Elf_Phdr phdr;
     uint32_t p_offset = elf.e_phoff + i*elf.e_phentsize;
     //printf("p_offset: %d\n",p_offset);
     fs_lseek(fd,p_offset,0);
-    assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
+    fs_read(fd,&phdr,sizeof(Elf_Phdr));
+    //assert(fs_read(fd,&phdr,elf.e_phentsize)==elf.e_phentsize);
     if(phdr.p_type == PT_LOAD){
-      char *buffer = (char *)malloc(phdr.p_filesz);
+      char *buffer = (char *)malloc(phdr.p_filesz * sizeof(char) + 1);
       fs_lseek(fd,phdr.p_offset,0);
-      assert(fs_read(fd,buffer,phdr.p_filesz)==phdr.p_filesz);
+      fs_read(fd,buffer,phdr.p_filesz);
       memcpy((void*)(uintptr_t)phdr.p_vaddr,buffer,phdr.p_filesz);
-      memset((void*)(uintptr_t)phdr.p_vaddr + phdr.p_filesz,0,phdr.p_memsz - phdr.p_filesz);
+      memset((void*)(uintptr_t)(phdr.p_vaddr + phdr.p_filesz),0,phdr.p_memsz - phdr.p_filesz);
       free(buffer);
     }
   }
