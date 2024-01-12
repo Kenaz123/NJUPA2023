@@ -11,20 +11,23 @@
   }
   return -1;
 }*/
-void naive_uload(PCB *pcb, const char *filename);
-
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+void switch_boot_pcb(); 
 int sys_brk(void *addr){
   return 0;
 }
 
-int sys_execve(const char *fname) {
-  naive_uload(NULL,fname);
+int sys_execve(const char *fname, char *const argv[], char *const envp[]) {
+  //naive_uload(NULL,fname);
+  context_uload(current, fname, argv, envp);
+  switch_boot_pcb();
+  yield();
   return -1;
 }
 
 void sys_exit(int status){
   //halt(status);
-  sys_execve("/bin/nterm");
+  sys_execve("/bin/nterm", NULL, NULL);
 }
 
 int fs_open(const char *pathname, int flags, int mode);
@@ -93,7 +96,7 @@ void do_syscall(Context *c) {
       PRINT_TRACE(sys_gettimeofday);
       break;
     default: panic("Unhandled syscall ID = %d", a[0]);
-    case SYS_execve: ret = sys_execve((const char *)c->GPR2);
+    case SYS_execve: ret = sys_execve((const char *)c->GPR2,(char * const *)c->GPR3,(char * const *)c->GPR4);
       PRINT_TRACE(sys_execve);
       while(1);
   }
