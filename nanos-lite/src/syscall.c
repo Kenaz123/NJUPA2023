@@ -1,7 +1,7 @@
 #include <common.h>
 #include "syscall.h"
 #include <proc.h>//newly added
-// #define STRACE
+#define STRACE
 /*int sys_write(int fd,void *buf,size_t count){
   if(fd == 1 || fd == 2){
     for(int i = 0; i < count; i++){

@@ -82,7 +82,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   //uint8_t *end = heap.end;
   //stack.end = end;
   //stack.start = end - STACK_SIZE;
-  pcb->cp = ucontext(NULL, stack, (void(*)()) entry);
+  pcb->cp = ucontext(NULL, stack, (void(*)())entry);
   //pcb->cp->GPRx = (uintptr_t)heap.end;
   void *ustack_end = new_page(8);
   int space_count = 0;
