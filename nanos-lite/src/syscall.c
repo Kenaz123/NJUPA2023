@@ -27,7 +27,8 @@ int sys_execve(const char *fname, char *const argv[], char *const envp[]) {
 
 void sys_exit(int status){
   //halt(status);
-  sys_execve("/bin/nterm", NULL, NULL);
+  char *argv[] = {"/bin/nterm", NULL};
+  sys_execve("/bin/nterm", argv, NULL);
 }
 
 int fs_open(const char *pathname, int flags, int mode);

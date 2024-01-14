@@ -23,21 +23,52 @@ static void sh_prompt() {
   sh_printf("sh> ");
 }
 
-static char fname[64];
+//static char fname[64];
 static void sh_handle_cmd(const char *cmd) {
   if (cmd == NULL) return;
   if (strncmp(cmd, "echo", 4) == 0) {
     if(strlen(cmd) == 5) sh_printf("\n");
     else sh_printf("%s",cmd + 5);
   } else {
-    if(strlen(cmd) > 64) {
+    /*if(strlen(cmd) > 64) {
       sh_printf("command too long\n");
-      return;
+      return;*/
+    int argc = 0;
+    char *cmd_n = (char *)malloc(sizeof(char) * strlen(cmd));
+    memset(cmd_n, 0, strlen(cmd));
+    strncpy(cmd_n, cmd, strlen(cmd) - 1);
+    
+    char **argv = (char **)malloc(sizeof(char *) * 16);//argc_max = 16
+    char *cur = strtok(cmd_n," ");
+    assert(cur != NULL);
+
+    char *fname = (char *)malloc(sizeof(char) * (strlen(cur) + 1));
+    memset(fname, 0, strlen(cur) + 1);
+    strcpy(fname, cur);
+
+    while(cur){
+      argv[argc] = cur;
+      cur = strtok(NULL," ");
+      argc++;
+      if(argc == 16){
+        sh_printf("too many arguments\n");
+        free(argv);
+        free(fname);
+        free(cmd_n);
+        return;
+      }
     }
-    memset(fname, 0, 64);
+    argv[argc] = NULL;
+    execve(fname, argv, NULL);
+    free(argv);
+    free(fname);
+    free(cmd_n);
+    }
+    /*memset(fname, 0, 64);
     strncpy(fname, cmd, strlen(cmd) - 1);//remove line break
-    execvp(fname, NULL);
-  }
+    execvp(fname, NULL);*/
+
+  
 }
 
 void builtin_sh_run() {
