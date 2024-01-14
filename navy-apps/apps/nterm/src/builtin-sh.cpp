@@ -59,7 +59,8 @@ static void sh_handle_cmd(const char *cmd) {
       }
     }
     argv[argc] = NULL;
-    execve(fname, argv, NULL);
+    char *envp[] = {NULL};
+    execve(fname, argv, envp);
     free(argv);
     free(fname);
     free(cmd_n);
