@@ -75,7 +75,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 }
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-  uintptr_t entry = loader(pcb,filename);
+//  uintptr_t entry = loader(pcb,filename);
   Area stack;
   stack.start = pcb->stack;
   stack.end = pcb->stack + STACK_SIZE;
@@ -136,8 +136,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   *base = (uintptr_t)NULL;
   base += 1;
   assert(string_area_mem == base);
-  /*uintptr_t entry = loader(pcb, filename);
-  printf("finish loader\n");*/
+  uintptr_t entry = loader(pcb, filename);
+  printf("finish loader\n");
   pcb->cp = ucontext(NULL, stack, (void(*)())entry);
   pcb->cp->GPRx = (uintptr_t)base_mem;
 
