@@ -60,6 +60,9 @@ static void sh_handle_cmd(const char *cmd) {
     }
     argv[argc] = NULL;
     char *envp[] = {NULL};
+    printf("argc:%d\n",argc);
+    for (int i = 0; i < argc; i++)
+      printf("argv[%d]:%s\n", i, argv[i]);
     execve(fname, argv, envp);
     free(argv);
     free(fname);

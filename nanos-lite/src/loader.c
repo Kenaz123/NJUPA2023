@@ -75,14 +75,13 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 }
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-  uintptr_t entry = loader(pcb, filename);
   Area stack;
   stack.start = pcb->stack;
   stack.end = pcb->stack + STACK_SIZE;
   //uint8_t *end = heap.end;
   //stack.end = end;
   //stack.start = end - STACK_SIZE;
-  pcb->cp = ucontext(NULL, stack, (void(*)())entry);
+  
   //pcb->cp->GPRx = (uintptr_t)heap.end;
   void *ustack_end = new_page(8);
   int space_count = 0;
@@ -136,6 +135,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   *base = (uintptr_t)NULL;
   base += 1;
   assert(string_area_mem == base);
+  uintptr_t entry = loader(pcb, filename);
+  pcb->cp = ucontext(NULL, stack, (void(*)())entry);
   pcb->cp->GPRx = (uintptr_t)base_mem;
 
 
