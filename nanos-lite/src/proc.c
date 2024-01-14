@@ -20,18 +20,18 @@ void hello_fun(void *arg) {
   while (1) {
     //Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (uintptr_t)arg, j);
     //Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (void *)arg, j);
-    Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (const char*)arg, j);
+  //  Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (const char*)arg, j);
     j++;
     yield();
   }
 }
 
 void init_proc() {
- // char *argv[] = {"/bin/menu",NULL};
-  //char *envp[] = {NULL};
+  char *argv[] = {"/bin/nterm",NULL};
+  char *envp[] = {NULL};
   context_kload(&pcb[0], hello_fun, "A");
-  //context_uload(&pcb[1], "/bin/menu", argv, envp);
-  context_kload(&pcb[1], hello_fun, "B");
+  context_uload(&pcb[1], "/bin/nterm", argv, envp);
+  //context_kload(&pcb[1], hello_fun, "B");
   switch_boot_pcb();
   //Log("Initializing processes...");
   //const char filename[] = "/bin/nterm";
