@@ -29,7 +29,7 @@ void hello_fun(void *arg) {
 void init_proc() {
   char *argv[] = {"/bin/nterm",NULL};
   char *envp[] = {NULL};
-  context_kload(&pcb[0], hello_fun, "A");
+ // context_kload(&pcb[0], hello_fun, "A");
   context_uload(&pcb[1], "/bin/nterm", argv, envp);
   //context_kload(&pcb[1], hello_fun, "B");
   switch_boot_pcb();
