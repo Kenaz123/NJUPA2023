@@ -74,7 +74,8 @@ int fs_open(const char *pathname, int flags, int mode){
         return i;
       }
     }
-    panic("file %s not found",pathname);
+    Log("file %s not found",pathname);
+    return -1;
 }
 
 /*static int get_open_index(int fd){

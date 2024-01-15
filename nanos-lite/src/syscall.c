@@ -12,13 +12,15 @@
   return -1;
 }*/
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
-void switch_boot_pcb(); 
+void switch_boot_pcb();
+int fs_open(const char *pathname, int flags, int mode);
 int sys_brk(void *addr){
   return 0;
 }
 
 int sys_execve(const char *fname, char *const argv[], char *const envp[]) {
   //naive_uload(NULL,fname);
+  if(fs_open(fname,0,0) == -1) return -2;
   context_uload(current, fname, argv, envp);
   switch_boot_pcb();
   yield();
@@ -31,7 +33,6 @@ void sys_exit(int status){
   sys_execve("/bin/nterm", argv, NULL);
 }
 
-int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
