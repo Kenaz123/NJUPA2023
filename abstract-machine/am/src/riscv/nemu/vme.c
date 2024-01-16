@@ -3,6 +3,13 @@
 #include <klib.h>
 #include <stdint.h>
 
+#define VA_OFFSET(addr) (addr & 0x00000fff)
+#define VA_VPN_0(addr)  ((addr >> 12) & 0x000003ff)
+#define VA_VPN_1(addr)  ((addr >> 22) & 0x000003ff)
+
+#define PA_OFFSET(addr) (addr & 0x00000fff)
+#define PA_PPN(addr)    ((addr >> 12) & 0x000fffff)
+
 static AddrSpace kas = {};
 static void* (*pgalloc_usr)(int) = NULL;
 static void (*pgfree_usr)(void*) = NULL;
@@ -68,6 +75,29 @@ void __am_switch(Context *c) {
 }
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
+  uintptr_t va_trans = (uintptr_t) va;
+  uintptr_t pa_trans = (uintptr_t) pa;
+  assert(PA_OFFSET(pa_trans) == 0);
+  assert(VA_OFFSET(va_trans) == 0);
+
+  uint32_t ppn = PA_PPN(pa_trans);
+  uint32_t vpn_1 = VA_VPN_1(va_trans);
+  uint32_t vpn_0 = VA_VPN_0(va_trans);
+  printf("[PA_PPN]: 0x%x, [VA_VPN_1]: 0x%x, [VA_VPN_0]: 0x%x\n", ppn, vpn_1, vpn_0);
+
+  PTE * page_dir_base = (PTE *)as->ptr;
+  PTE * page_dir_target = page_dir_base + vpn_1;
+  if(*page_dir_target == 0){//empty
+    PTE * page_table_base = (PTE *)pgalloc_usr(PGSIZE);
+    *page_dir_target = ((PTE)page_table_base) | PTE_V;
+    PTE * page_table_target = page_table_base + vpn_0;
+    *page_table_target = (ppn << 12) | PTE_V | PTE_R | PTE_W | PTE_X;
+  } else {
+    PTE * page_table_base = (PTE *)((*page_dir_target) & 0xfffff000);
+    PTE * page_table_target = page_table_base + vpn_0;
+    *page_table_target = (ppn << 12) | PTE_V | PTE_R | PTE_W | PTE_X;
+  }
+  printf("[map end]\n");
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
