@@ -28,9 +28,9 @@ int sys_execve(const char *fname, char *const argv[], char *const envp[]) {
 }
 
 void sys_exit(int status){
-  //halt(status);
-  char *argv[] = {"/bin/nterm", NULL};
-  sys_execve("/bin/nterm", argv, NULL);
+  halt(status);
+  //char *argv[] = {"/bin/nterm", NULL};
+  //sys_execve("/bin/nterm", argv, NULL);
 }
 
 size_t fs_read(int fd, void *buf, size_t len);
