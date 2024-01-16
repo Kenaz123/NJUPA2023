@@ -83,7 +83,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
   uint32_t ppn = PA_PPN(pa_trans);
   uint32_t vpn_1 = VA_VPN_1(va_trans);
   uint32_t vpn_0 = VA_VPN_0(va_trans);
-  printf("[PA_PPN]: 0x%x, [VA_VPN_1]: 0x%x, [VA_VPN_0]: 0x%x\n", ppn, vpn_1, vpn_0);
+  //printf("[PA_PPN]: 0x%x, [VA_VPN_1]: 0x%x, [VA_VPN_0]: 0x%x\n", ppn, vpn_1, vpn_0);
 
   PTE * page_dir_base = (PTE *)as->ptr;
   PTE * page_dir_target = page_dir_base + vpn_1;
