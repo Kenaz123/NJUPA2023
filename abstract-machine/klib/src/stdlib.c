@@ -9,7 +9,7 @@ static bool is_init_addr = false;
 static void *addr;
 
 void init_addr(){
-  addr = (void*)ROUNDUP(heap.start, 8);
+  addr = (void*)ROUNDUP(heap.start + 0x30000, 8);
   is_init_addr = true;
 }
 
