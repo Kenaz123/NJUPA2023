@@ -1,3 +1,4 @@
+#include "am.h"
 #include "memory.h"
 #include <proc.h>
 #include <elf.h>
@@ -76,6 +77,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
 //  uintptr_t entry = loader(pcb,filename);
+  //protect((AddrSpace *)(pcb->as));
   Area stack;
   stack.start = pcb->stack;
   stack.end = pcb->stack + STACK_SIZE;
