@@ -97,7 +97,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
     PTE * page_table_target = page_table_base + vpn_0;
     *page_table_target = (ppn << 12) | PTE_V | PTE_R | PTE_W | PTE_X;
   }
-  printf("[map end]\n");
+  //printf("[map end]\n");
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
