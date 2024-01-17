@@ -59,6 +59,6 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   }
   paddr_t ppn = PTE_PPN(page_table_target_item) << 12;
   paddr_t paddr = ppn | offset;
-  assert(paddr == vaddr);
+  //assert(paddr == vaddr);
   return paddr;
 }
