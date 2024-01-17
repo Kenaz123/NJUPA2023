@@ -237,7 +237,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   assert(string_area_mem == base);
   uintptr_t entry = loader(pcb, filename);
   //printf("finish loader\n");
-  pcb->cp = ucontext(NULL, stack, (void(*)())entry);
+  pcb->cp = ucontext(&pcb->as, stack, (void(*)())entry);
   Log("entry:%p",(void *)entry);
   pcb->cp->GPRx = (uintptr_t)base_mem;
 
