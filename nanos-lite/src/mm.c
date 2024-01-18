@@ -5,7 +5,7 @@ static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
   pf += nr_page * PGSIZE;
-  Log("free physical pages starting from %x", pf);
+  Log("free physical pages starting from %p", pf);
   return pf;
 }
 
