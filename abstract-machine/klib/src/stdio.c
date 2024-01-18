@@ -34,6 +34,9 @@ static int transstoi(int n,char *s,int base){
   return i;
 
 }
+
+
+
 int printf(const char *fmt, ...) {
   va_list ap;
   int n;

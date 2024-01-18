@@ -77,8 +77,8 @@ void __am_switch(Context *c) {
 void map(AddrSpace *as, void *va, void *pa, int prot) {
   uintptr_t va_trans = (uintptr_t) va;
   uintptr_t pa_trans = (uintptr_t) pa;
-  //assert(PA_OFFSET(pa_trans) == 0);
-  //assert(VA_OFFSET(va_trans) == 0);
+  assert(PA_OFFSET(pa_trans) == 0);
+  assert(VA_OFFSET(va_trans) == 0);
 
   uint32_t ppn = PA_PPN(pa_trans);
   uint32_t vpn_1 = VA_VPN_1(va_trans);
