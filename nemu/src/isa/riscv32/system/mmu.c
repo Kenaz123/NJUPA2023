@@ -46,14 +46,14 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   PTE page_table_target = page_table_base + vpn_0 * 4;
   word_t page_table_target_item = paddr_read(page_table_target, 4);
 
-  //if(PTE_V(page_table_target_item) == 0) assert(0);
+  if(PTE_V(page_table_target_item) == 0) assert(0);
 
   switch(type){
     case MEM_TYPE_IFETCH: if(PTE_X(page_table_target_item) == 0) assert(0);
       break;
     case MEM_TYPE_READ: if(PTE_R(page_table_target_item) == 0) assert(0);
       break;
-    case MEM_TYPE_WRITE: //if(PTE_W(page_table_target_item) == 0) assert(0);
+    case MEM_TYPE_WRITE: if(PTE_W(page_table_target_item) == 0) assert(0);
       break;
     default: assert(0); break;
   }
