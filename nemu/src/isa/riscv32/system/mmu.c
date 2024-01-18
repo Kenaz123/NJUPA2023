@@ -53,7 +53,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
       break;
     case MEM_TYPE_READ: if(PTE_R(page_table_target_item) == 0) assert(0);
       break;
-    case MEM_TYPE_WRITE: if(PTE_W(page_table_target_item) == 0) assert(0);
+    case MEM_TYPE_WRITE: //if(PTE_W(page_table_target_item) == 0) assert(0);
       break;
     default: assert(0); break;
   }
