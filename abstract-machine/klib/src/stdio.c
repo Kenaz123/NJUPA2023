@@ -71,6 +71,14 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
           out+=1;
           break;
         }
+        case 'x': {
+          out += transstoi(va_arg(ap,unsigned int), out, 16);
+          break;
+        }
+        case 'p': {
+          out += transstoi(va_arg(ap,unsigned int), out, 16);
+          break;
+        }
       }
     }
   }
