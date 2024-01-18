@@ -68,6 +68,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       }
       if(flags == (PF_R | PF_W)){//data
         load_file_break = virtAddr + memSiz;//check again plz
+        if(load_file_break > pcb->max_brk){
+          pcb->max_brk = load_file_break;
+        }
         assert(code_max_page_va_base != 0);
         assert(virtAddr > code_max_page_va_base);
         Log("code_max_page_va_base: %d,data_page_va_base: %d\n",code_max_page_va_base,virtAddr);
