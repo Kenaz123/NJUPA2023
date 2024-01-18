@@ -79,7 +79,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
           break;
         }
         case 'p': {
-          out += transstoi(va_arg(ap,uintptr_t), out, 16);
+          out += transstoi(va_arg(ap,int), out, 16);
           break;
         }
       }
