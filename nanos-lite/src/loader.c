@@ -24,7 +24,7 @@ int fs_close(int fd);
 uintptr_t load_file_break;
 #endif
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
+/*static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   if(fd < 0){
     panic("should not reach here: fd <= 0");
@@ -33,16 +33,16 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   assert(fs_read(fd,&elf,sizeof(elf)) == sizeof(elf));
   //ramdisk_read(&elf,0,sizeof(Elf_Ehdr));
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);
-  /*Elf_Phdr phdr[elf.e_phnum];//information of the program headers
-  fs_read(fd,&phdr,elf.e_phnum * sizeof(Elf_Phdr));
+  //Elf_Phdr phdr[elf.e_phnum];//information of the program headers
+  //fs_read(fd,&phdr,elf.e_phnum * sizeof(Elf_Phdr));
   //ramdisk_read(phdr,elf.e_ehsize,elf.e_phnum * sizeof(Elf_Phdr));
-  for(int i = 0; i < elf.e_phnum; i++){
-    if(phdr[i].p_type == PT_LOAD){
+ // for(int i = 0; i < elf.e_phnum; i++){
+    //if(phdr[i].p_type == PT_LOAD){
       //fs_read(fd, (void *)phdr[i].p_vaddr+phdr[i].p_offset, phdr[i].p_filesz);
-      ramdisk_read((void *)phdr[i].p_vaddr,phdr[i].p_offset,phdr[i].p_filesz);
-      memset((void *)(phdr[i].p_vaddr+phdr[i].p_filesz),0,phdr[i].p_memsz-phdr[i].p_filesz);
-    }
-  }*/
+      //ramdisk_read((void *)phdr[i].p_vaddr,phdr[i].p_offset,phdr[i].p_filesz);
+     // memset((void *)(phdr[i].p_vaddr+phdr[i].p_filesz),0,phdr[i].p_memsz-phdr[i].p_filesz);
+   // }
+ // }
   //Elf_Phdr phdr;
 #ifdef HAS_VME
   uintptr_t code_max_page_va_base = 0;
@@ -154,6 +154,99 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   //TODO();
   assert(fs_close(fd) == 0);
   return elf.e_entry;
+}*/
+
+static uintptr_t loader(PCB *pcb, const char *filename) {
+  Elf_Ehdr header;
+  int fd = fs_open(filename, 0, 0);
+  assert(fd >= 0);
+  fs_read(fd ,&header,sizeof(header));
+  assert(*(uint32_t *)header.e_ident == 0x464c457f);
+  //Elf_Addr entry = header.e_entry;
+  //Elf_Off  phoff = header.e_phoff;
+  //Elf_Half phentsize = header.e_phentsize;
+  assert(sizeof(Elf_Phdr) == header.e_phentsize);
+  //Elf_Half phnum = header.e_phnum;
+  //assert(phnum!=0);
+  Elf_Phdr pheader;
+  for(int i = 0; i < header.e_phnum; i++){
+      fs_lseek(fd, header.e_phoff + i * header.e_phentsize, 0);
+      fs_read(fd, &pheader, header.e_phentsize);
+      //ramdisk_read(&pheader,phoff + i*phentsize ,phentsize);
+      if(pheader.p_type == PT_LOAD){
+          uintptr_t filesz = pheader.p_filesz;
+          uintptr_t vaddr  = pheader.p_vaddr;
+          //assert((vaddr & 0xfff) == 0);
+          uintptr_t  offset = pheader.p_offset;
+          uintptr_t memsz  = pheader.p_memsz;
+
+          assert(memsz >= filesz);
+          uintptr_t end = vaddr + memsz;
+          if(end > pcb->max_brk){
+              pcb->max_brk = end;
+          }
+
+          //uintptr_t head = 0;
+          if((vaddr & 0xfff) != 0){
+              void *pa = (void *)((uintptr_t)new_page(1) + (vaddr & 0xfff));
+              void *va = (void *)vaddr;
+              map(&(pcb->as), va, pa, MMAP_READ | MMAP_WRITE);
+              fs_lseek(fd, offset, 0);
+              uintptr_t hsize = PGSIZE - (vaddr & 0xfff);
+              fs_read(fd, pa, hsize);
+              offset = offset + hsize;
+              filesz = filesz - hsize;
+              memsz  = memsz  - hsize;
+              vaddr  = vaddr  + hsize;
+          }
+          assert((vaddr & 0xfff) == 0);
+
+          int nr_page = ROUNDUP(filesz, PGSIZE) / PGSIZE;
+          int j = 0;
+          for(j = 0; j < nr_page; j++){
+              void *pa = new_page(1);
+              void *va = (void *)(vaddr + j * PGSIZE);
+              map(&(pcb->as), va, pa, MMAP_READ | MMAP_WRITE);
+              uintptr_t pg_offset = offset + j * PGSIZE;
+              fs_lseek(fd, pg_offset, 0);
+              if(j != nr_page -1){
+                  fs_read(fd, pa, PGSIZE);
+              }
+              else{
+                  uint32_t rest = filesz - j * PGSIZE;
+                  assert(rest > 0 && rest <= PGSIZE);
+                  fs_read(fd, pa, rest);
+                  uint32_t bss = memsz - filesz;
+                  if(bss + rest <= PGSIZE){
+                      memset((void *)((uintptr_t)pa + rest), 0, bss);
+                  }
+                  else{
+                      //assert(0);
+                      memset((void *)((uintptr_t)pa + rest), 0, PGSIZE - rest);
+                      bss = bss - (PGSIZE - rest);
+                      int bss_nr_page = ROUNDUP(bss, PGSIZE) / PGSIZE;
+                      //printf("bss_nr_page = %d\n", bss_nr_page);
+                      for(int k = 0; k < bss_nr_page; k++){
+                          void * bss_pa = new_page(1);
+                          //printf("bss_pa = %x\n", bss_pa);
+                          void * bss_va = (void *)(vaddr + (nr_page + k) * PGSIZE);
+                          map(&(pcb->as), bss_va, bss_pa, MMAP_READ | MMAP_WRITE);
+                          if(k != bss_nr_page - 1){
+                              memset(bss_pa, 0, PGSIZE);
+                          }
+                          else{
+                              memset(bss_pa, 0, bss & 0xfff);
+                          }
+                      }
+                  }
+              }
+              //memset((void *)(vaddr + filesz),0,memsz-filesz);
+          }
+          
+      }
+  }
+  fs_close(fd); 
+  return header.e_entry;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
