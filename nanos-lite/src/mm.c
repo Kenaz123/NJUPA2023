@@ -30,6 +30,7 @@ extern uintptr_t load_file_break;
 /* The brk() system call handler. */
 int mm_brk(uintptr_t brk) {
 #ifdef HAS_VME
+  Log("mm_brk start allocating\n");
   if(current->max_brk == 0){
     Log("load_file_break: %p\n", (void *)load_file_break);
     void * va_base;
