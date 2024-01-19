@@ -20,17 +20,17 @@ void hello_fun(void *arg) {
   while (1) {
     //Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (uintptr_t)arg, j);
     //Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (void *)arg, j);
-    Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (const char*)arg, j);
+   // Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (const char*)arg, j);
     j++;
     yield();
   }
 }
 
 void init_proc() {
-  char *argv[] = {"/bin/pal", NULL};
+  char *argv[] = {"/bin/hello", NULL};
   char *envp[] = {NULL};
   context_kload(&pcb[1], hello_fun, "A");
-  context_uload(&pcb[0], "/bin/pal", argv, envp);
+  context_uload(&pcb[0], "/bin/hello", argv, envp);
   //context_kload(&pcb[1], hello_fun, "B");
   switch_boot_pcb();
   //Log("Initializing processes...");
