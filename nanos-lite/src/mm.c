@@ -28,7 +28,7 @@ extern PCB *current;
 extern uintptr_t load_file_break;
 #endif
 /* The brk() system call handler. */
-/*int mm_brk(uintptr_t brk) {
+int mm_brk(uintptr_t brk) {
 #ifdef HAS_VME
   //printf("mm_brk start allocating\n");
   if(current->max_brk == 0){
@@ -63,36 +63,8 @@ extern uintptr_t load_file_break;
 #else
   return 0;
 #endif
-}*/
-int mm_brk(uintptr_t brk)
-{
-  // assert(brk >= 0x)
-  // f (brk < (uintptr_t)USR_SPACE.start || (brk > (uintptr_t)USR_SPACE.end - USR_STACK_PG_NUM * PGSIZE))
-  // {
-  //   printf("invalid!\n");
-  //   return 0;i
-  // }
-#define PG_MASK ~0xfff
-  if (current->max_brk == 0)
-  {
-    current->max_brk = (brk & ~PG_MASK) ? ((brk & PG_MASK) + PGSIZE) : brk;
-    printf("first malloc is at %p\n", (void *)current->max_brk);
-    return 0;
-  }
-
-  for (; current->max_brk < brk; current->max_brk += PGSIZE)
-  {
-    // printf("malloc new space for virtual %p, brk is %p\n", (void *)current->max_brk, (void *)brk);
-#ifdef HAS_VME
-    // printf("malloc new space %p for virtual %p\n", pg_p, (void *)i);
-    // map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), PGSIZE);
-    map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), 0);
-#endif
-  }
-
-  // printf("finished malloc\n");
-  return 0;
 }
+
 void init_mm() {
   Log("heap.start: %p, heap.end: %p\n", heap.start, heap.end);
   pf = (void *)ROUNDUP(heap.start, PGSIZE);
