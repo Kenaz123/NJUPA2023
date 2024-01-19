@@ -41,7 +41,10 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 
   PTE page_dir_target = page_dir_base + vpn_1 * 4;
   word_t page_dir_target_item = paddr_read(page_dir_target, 4);
-  if(PTE_V(page_dir_target_item) == 0) assert(0);
+  if(PTE_V(page_dir_target_item) == 0) {
+    Log("[VA]: 0x%x, [Dir Target]: 0x%x, [Dir Target Item]: 0x%x\n",vaddr, page_dir_target, page_dir_target_item);
+    assert(0);
+  }
 
   PTE page_table_base = PTE_PPN(page_dir_target_item) << 12;
   PTE page_table_target = page_table_base + vpn_0 * 4;
