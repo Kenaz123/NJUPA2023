@@ -24,7 +24,7 @@ int fs_close(int fd);
 uintptr_t load_file_break;
 #endif
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
+/*static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   if(fd < 0){
     panic("should not reach here: fd <= 0");
@@ -157,7 +157,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   //TODO();
   assert(fs_close(fd) == 0);
   return elf.e_entry;
-}
+}*/
 /*#define min(x, y) ((x < y) ? x : y)
 #define PG_MASK (~0xfff)
 #define ISALIGN(vaddr) ((vaddr) == ((vaddr)&PG_MASK))
@@ -248,7 +248,7 @@ static uintptr_t loader(PCB *pcb, const char *filename)
   return entry;
 }*/
 
-/*static uintptr_t loader(PCB *pcb, const char *filename) {
+static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr header;
   int fd = fs_open(filename, 0, 0);
   assert(fd >= 0);
@@ -298,7 +298,7 @@ static uintptr_t loader(PCB *pcb, const char *filename)
           for(j = 0; j < nr_page; j++){
               void *pa = new_page(1);
               void *va = (void *)(vaddr + j * PGSIZE);
-              map(&(pcb->as), va, pa, MMAP_READ | MMAP_WRITE);
+              map(&(pcb->as), va, pa, 0);
               uintptr_t pg_offset = offset + j * PGSIZE;
               fs_lseek(fd, pg_offset, 0);
               if(j != nr_page -1){
@@ -322,7 +322,7 @@ static uintptr_t loader(PCB *pcb, const char *filename)
                           void * bss_pa = new_page(1);
                           //printf("bss_pa = %x\n", bss_pa);
                           void * bss_va = (void *)(vaddr + (nr_page + k) * PGSIZE);
-                          map(&(pcb->as), bss_va, bss_pa, MMAP_READ | MMAP_WRITE);
+                          map(&(pcb->as), bss_va, bss_pa, 0);
                           if(k != bss_nr_page - 1){
                               memset(bss_pa, 0, PGSIZE);
                           }
@@ -339,7 +339,7 @@ static uintptr_t loader(PCB *pcb, const char *filename)
   }
   fs_close(fd); 
   return header.e_entry;
-}*/
+}
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
