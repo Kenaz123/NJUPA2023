@@ -83,10 +83,10 @@ int mm_brk(uintptr_t brk)
   for (; current->max_brk < brk; current->max_brk += PGSIZE)
   {
     // printf("malloc new space for virtual %p, brk is %p\n", (void *)current->max_brk, (void *)brk);
-#ifdef USR_SPACE_ENABLE
+#ifdef HAS_VME
     // printf("malloc new space %p for virtual %p\n", pg_p, (void *)i);
     // map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), PGSIZE);
-    map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), PTE_R | PTE_W | PTE_X);
+    map(&current->as, (void *)current->max_brk, pg_alloc(PGSIZE), 0);
 #endif
   }
 
