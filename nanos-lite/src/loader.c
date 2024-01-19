@@ -24,7 +24,7 @@ int fs_close(int fd);
 uintptr_t load_file_break;
 #endif
 
-/*static uintptr_t loader(PCB *pcb, const char *filename) {
+static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   if(fd < 0){
     panic("should not reach here: fd <= 0");
@@ -157,8 +157,8 @@ uintptr_t load_file_break;
   //TODO();
   assert(fs_close(fd) == 0);
   return elf.e_entry;
-}*/
-#define min(x, y) ((x < y) ? x : y)
+}
+/*#define min(x, y) ((x < y) ? x : y)
 #define PG_MASK (~0xfff)
 #define ISALIGN(vaddr) ((vaddr) == ((vaddr)&PG_MASK))
 #define OFFSET(vaddr) ((vaddr) & (~PG_MASK))
@@ -246,7 +246,7 @@ static uintptr_t loader(PCB *pcb, const char *filename)
   assert(fs_close(fd) != -1);
 
   return entry;
-}
+}*/
 
 /*static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr header;
