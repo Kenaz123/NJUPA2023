@@ -24,7 +24,7 @@ int fs_close(int fd);
 uintptr_t load_file_break;
 #endif
 
-/*static uintptr_t loader(PCB *pcb, const char *filename) {
+static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   if(fd < 0){
     panic("should not reach here: fd <= 0");
@@ -157,9 +157,9 @@ uintptr_t load_file_break;
   //TODO();
   assert(fs_close(fd) == 0);
   return elf.e_entry;
-}*/
+}
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
+/*static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr header;
   int fd = fs_open(filename, 0, 0);
   assert(fd >= 0);
@@ -250,7 +250,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   }
   fs_close(fd); 
   return header.e_entry;
-}
+}*/
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
