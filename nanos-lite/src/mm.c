@@ -28,7 +28,7 @@ extern PCB *current;
 extern uintptr_t load_file_break;
 #endif
 /* The brk() system call handler. */
-/*int mm_brk(uintptr_t brk) {
+int mm_brk(uintptr_t brk) {
 #ifdef HAS_VME
   //printf("mm_brk start allocating\n");
   if(current->max_brk == 0){
@@ -63,8 +63,8 @@ extern uintptr_t load_file_break;
 #else
   return 0;
 #endif
-}*/
-int mm_brk(uintptr_t brk)
+}
+/*int mm_brk(uintptr_t brk)
 {
   // assert(brk >= 0x)
   // f (brk < (uintptr_t)USR_SPACE.start || (brk > (uintptr_t)USR_SPACE.end - USR_STACK_PG_NUM * PGSIZE))
@@ -92,7 +92,7 @@ int mm_brk(uintptr_t brk)
 
   // printf("finished malloc\n");
   return 0;
-}
+}*/
 void init_mm() {
   Log("heap.start: %p, heap.end: %p\n", heap.start, heap.end);
   pf = (void *)ROUNDUP(heap.start, PGSIZE);
