@@ -15,6 +15,7 @@ Context* __am_irq_handle(Context *c) {
     switch (c->mcause) {
       case -1: ev.event = EVENT_YIELD; break;
       case 1:case 4: ev.event = EVENT_SYSCALL; break;
+      case EVENT_IRQ_TIMER: ev.event = EVENT_IRQ_TIMER; break;
       default: ev.event = EVENT_ERROR; break;
     }
 
@@ -42,6 +43,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   Context *base = (Context *)(end - 36);//32+3+1=36
   base->pdir = NULL;
   base->mepc = (uintptr_t)entry;
+  base->mstatus = 1 << 7;
   base->gpr[10] = (uintptr_t)arg;
   return base;
 }

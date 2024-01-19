@@ -98,10 +98,11 @@ void do_syscall(Context *c) {
     case SYS_gettimeofday: ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3);
       PRINT_TRACE(sys_gettimeofday);
       break;
-    default: panic("Unhandled syscall ID = %d", a[0]);
+
     case SYS_execve: ret = sys_execve((const char *)c->GPR2,(char * const *)c->GPR3,(char * const *)c->GPR4);
       PRINT_TRACE(sys_execve);
       while(1);
+    default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx = ret;
 }

@@ -62,10 +62,23 @@ static vaddr_t *csr_register(word_t imm){
     default:panic("Unknown csr");
   }
 }
-
+#define MSTATUS_MIE 0x00000008
+#define MSTATUS_MPIE 0x00000080
 #define CSR(i) *csr_register(i)
 #define ECALL(dnpc) { bool success; dnpc = (isa_raise_intr(isa_reg_str2val("a7",&success), s->pc));}
-
+#define MRET(dnpc) do { \
+    dnpc = CSR(0x341); \
+    if (cpu.csr.mstatus & MSTATUS_MPIE) { \
+        cpu.csr.mstatus |= MSTATUS_MIE; \
+    } else { \
+        cpu.csr.mstatus &= (~MSTATUS_MIE); \
+    } \
+    cpu.csr.mstatus |= MSTATUS_MPIE; \
+} while(0)
+/*#define MRET(dnpc) { dnpc = CSR(0x341); 
+  if(cpu.csr.mstatus & MSTATUS_MPIE){ cpu.csr.mstatus |= MSTATUS_MIE;}
+  else {cpu.csr.mstatus &= (~MSTATUS_MIE);}
+  cpu.csr.mstatus |= MSTATUS_MPIE;}*/
 static int decode_exec(Decode *s) {
   int rd = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
@@ -133,7 +146,7 @@ static int decode_exec(Decode *s) {
 
 
 
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, s->dnpc = CSR(0x341)); 
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, MRET(s->dnpc)); 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ECALL(s->dnpc)); 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));

@@ -14,7 +14,17 @@
 ***************************************************************************************/
 
 #include <isa.h>
+#define IRQ_TIMER 0x80000007
+#define EVENT_IRQ_TIMER 5
+/*#define get_mstatus_field(offset)      ((*s0 >> offset) & 0x1)
+#define set_mstatus_field(offset, val) ((val == 0) ? (*s0 &= (~(1 << offset))) : (*s0 != (1 << offset)))
+#define get_mstatus_mie()              get_mstatus_field(3)
+#define set_mstatus_mie(val)           set_mstatus_field(3,val)
+#define get_mstatus_mpie               get_mstatus_field(7)
+#define set_mstatus_mpie(val)         set_mstatus_field(7, val)*/
 
+#define MSTATUS_MIE 0x00000008
+#define MSTATUS_MPIE 0x00000080
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
@@ -24,12 +34,23 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //}
   cpu.csr.mcause = NO;
   cpu.csr.mepc = epc;
+  if(cpu.csr.mstatus & MSTATUS_MIE){
+    cpu.csr.mstatus |= MSTATUS_MPIE;
+  }else{
+    cpu.csr.mstatus &= (~MSTATUS_MPIE);
+  }
+  cpu.csr.mstatus &= (~MSTATUS_MIE);
 #ifdef CONFIG_ETRACE
   printf("event ID = %d,current PC = 0x%02x\n",NO,epc);
 #endif
   return cpu.csr.mtvec;
 }
 
+
 word_t isa_query_intr() {
+  if(cpu.INTR && (cpu.csr.mstatus & MSTATUS_MIE)){
+    cpu.INTR = false;
+    return IRQ_TIMER;
+  }
   return INTR_EMPTY;
 }

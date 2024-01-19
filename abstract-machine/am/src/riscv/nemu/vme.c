@@ -105,6 +105,7 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   uint32_t *end = kstack.end;
   Context *base = (Context *)(end - 36);
   base->pdir = as->ptr;
+  base->mstatus = 1 << 7;
   base->mepc = (uintptr_t)entry;
   return base;
 }
