@@ -90,7 +90,7 @@ static void execute(uint64_t n) {
     IFDEF(CONFIG_DEVICE, device_update());
     word_t intr = isa_query_intr();
     if(intr != INTR_EMPTY){
-      cpu.pc = isa_raise_intr(intr, cpu.pc-4);
+      cpu.pc = isa_raise_intr(intr, cpu.pc);
     }
   }
 }
