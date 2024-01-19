@@ -282,7 +282,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
           if((vaddr & 0xfff) != 0){
               void *pa = (void *)((uintptr_t)new_page(1) + (vaddr & 0xfff));
               void *va = (void *)vaddr;
-              map(&(pcb->as), va, pa, MMAP_READ | MMAP_WRITE);
+              map(&(pcb->as), va, pa, 0);
               fs_lseek(fd, offset, 0);
               uintptr_t hsize = PGSIZE - (vaddr & 0xfff);
               fs_read(fd, pa, hsize);
