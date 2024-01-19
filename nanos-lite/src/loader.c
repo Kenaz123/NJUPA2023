@@ -33,17 +33,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   assert(fs_read(fd,&elf,sizeof(elf)) == sizeof(elf));
   //ramdisk_read(&elf,0,sizeof(Elf_Ehdr));
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);
-  //Elf_Phdr phdr[elf.e_phnum];//information of the program headers
-  //fs_read(fd,&phdr,elf.e_phnum * sizeof(Elf_Phdr));
-  //ramdisk_read(phdr,elf.e_ehsize,elf.e_phnum * sizeof(Elf_Phdr));
- // for(int i = 0; i < elf.e_phnum; i++){
-    //if(phdr[i].p_type == PT_LOAD){
-      //fs_read(fd, (void *)phdr[i].p_vaddr+phdr[i].p_offset, phdr[i].p_filesz);
-      //ramdisk_read((void *)phdr[i].p_vaddr,phdr[i].p_offset,phdr[i].p_filesz);
-     // memset((void *)(phdr[i].p_vaddr+phdr[i].p_filesz),0,phdr[i].p_memsz-phdr[i].p_filesz);
-   // }
- // }
-  //Elf_Phdr phdr;
 #ifdef HAS_VME
   uintptr_t code_max_page_va_base = 0;
 #endif
@@ -79,7 +68,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         unsigned int page_count = memSiz / PGSIZE;
         if(page_count * PGSIZE == memSiz) page_count--;
         unsigned int page_count_file = fileSiz / PGSIZE;
-        if(page_count_file * PGSIZE == fileSiz) page_count--;
+        if(page_count_file * PGSIZE == fileSiz) page_count_file--;
 
         for(unsigned int i = 0; i <= page_count_file; i++){
           size_t read_bytes = PGSIZE;
@@ -107,7 +96,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         unsigned int page_count = (gap + memSiz) / PGSIZE;
         if(page_count * PGSIZE == (gap + memSiz)) page_count--;
         unsigned int page_count_file = (gap + fileSiz) / PGSIZE;
-        if(page_count_file * PGSIZE == (gap + fileSiz)) page_count--;
+        if(page_count_file * PGSIZE == (gap + fileSiz)) page_count_file--;
 
         for(int i = 0; i <= page_count_file; i++){
           if(i == 0){
