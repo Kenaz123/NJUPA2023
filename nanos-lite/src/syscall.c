@@ -75,8 +75,8 @@ void do_syscall(Context *c) {
     case SYS_write: ret = fs_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
       PRINT_TRACE(fs_write);
       break;
-    case SYS_brk: //ret = mm_brk((uintptr_t)c->GPR2);
-      ret = sys_brk((void *)c->GPR2);
+    case SYS_brk: ret = mm_brk((uintptr_t)c->GPR2);
+      //ret = sys_brk((void *)c->GPR2);
       //Log("sys_brk(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
       PRINT_TRACE(mm_brk);
       break;
