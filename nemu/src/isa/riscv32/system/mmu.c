@@ -31,7 +31,7 @@
 typedef vaddr_t PTE;
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-  Log("[VA]: 0x%x", vaddr);
+  //Log("[VA]: 0x%x", vaddr);
   word_t satp = cpu.satp;
   PTE page_dir_base = satp << 12;
 
@@ -48,7 +48,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   word_t page_table_target_item = paddr_read(page_table_target, 4); 
  
   if(PTE_V(page_table_target_item) == 0){ 
-    Log("[Table Target]: 0x%x, [Table Target Item]: 0x%x\n",page_table_target, page_table_target_item);
+    Log("[VA]: 0x%x, [Table Target]: 0x%x, [Table Target Item]: 0x%x\n",vaddr, page_table_target, page_table_target_item);
     assert(0);
   }
 
