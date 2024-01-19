@@ -37,7 +37,7 @@ size_t fs_read(int fd, void *buf, size_t len);
 size_t fs_write(int fd, const void *buf, size_t len);
 size_t fs_lseek(int fd, size_t offset, int whence);
 int fs_close(int fd);
-
+int mm_brk(uintptr_t brk); 
 
 /*#define time_t uint64_t
 #define suseconds_t uint64_t
@@ -75,9 +75,9 @@ void do_syscall(Context *c) {
     case SYS_write: ret = fs_write(c->GPR2,(void *)c->GPR3,(size_t)c->GPR4);
       PRINT_TRACE(fs_write);
       break;
-    case SYS_brk: ret = sys_brk((void *)c->GPR2);
+    case SYS_brk: ret = mm_brk((uintptr_t)c->GPR2);
       //Log("sys_brk(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
-      PRINT_TRACE(sys_brk);
+      PRINT_TRACE(mm_brk);
       break;
     case SYS_open: ret = fs_open((const char *)c->GPR2,c->GPR3,c->GPR4);
       //Log("fs_open(%s, %d, %d) = %d", (const char *)c->GPR2,c->GPR3,c->GPR4,ret);
