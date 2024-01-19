@@ -31,7 +31,7 @@
 typedef vaddr_t PTE;
 
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-  //Log("[VA]: 0x%x", vaddr);
+  Log("[VA]: 0x%x", vaddr);
   word_t satp = cpu.satp;
   PTE page_dir_base = satp << 12;
 
