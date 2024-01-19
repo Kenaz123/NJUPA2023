@@ -74,7 +74,7 @@ void __am_switch(Context *c) {
   }
 }
 
-void map(AddrSpace *as, void *va, void *pa, int prot) {
+/*void map(AddrSpace *as, void *va, void *pa, int prot) {
   uintptr_t va_trans = (uintptr_t) va;
   uintptr_t pa_trans = (uintptr_t) pa;
   assert(PA_OFFSET(pa_trans) == 0);
@@ -99,6 +99,26 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
     *page_table_target = (ppn << 12) | PTE_V | PTE_R | PTE_W | PTE_X;
   }
   //printf("[map end]\n");
+}*/
+
+void map(AddrSpace *as, void *va, void *pa, int prot)
+{
+#define PGT1_ID(val) (val >> 22)
+#define PGT2_ID(val) ((val & 0x3fffff) >> 12)
+  uint32_t pa_raw = (uint32_t)pa;
+  uint32_t va_raw = (uint32_t)va;
+  uint32_t **pt_1 = (uint32_t **)as->ptr;
+  if (pt_1[PGT1_ID(va_raw)] == NULL)
+    pt_1[PGT1_ID(va_raw)] = (uint32_t *)pgalloc_usr(PGSIZE);
+
+  uint32_t *pt_2 = pt_1[PGT1_ID(va_raw)];
+  if (pt_2[PGT2_ID(va_raw)] == 0)
+    pt_2[PGT2_ID(va_raw)] = (pa_raw & (~0xfff)) | prot;
+  else
+  {
+    assert(0);
+  }
+  // printf("map vrirtual address %p to physical address %p, pt2 id is %p, store addr %p\n", va_raw, pa_raw, PGT2_ID(va_raw), pt_2[PGT2_ID(va_raw)] >> 12);
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
