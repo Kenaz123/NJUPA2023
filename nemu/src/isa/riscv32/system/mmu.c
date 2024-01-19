@@ -18,7 +18,7 @@
 #include <memory/vaddr.h>
 #include <memory/paddr.h>
 #include <stdint.h>
-#define VA_OFFSET(addr) (addr & 0x00000fff)
+/*#define VA_OFFSET(addr) (addr & 0x00000fff)
 #define VA_VPN_0(addr)  ((addr >> 12) & 0x000003ff)
 #define VA_VPN_1(addr)  ((addr >> 22) & 0x000003ff)
 
@@ -64,5 +64,36 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
   paddr_t ppn = PTE_PPN(page_table_target_item) << 12;
   paddr_t paddr = ppn | offset;
   //assert(paddr == vaddr);
+  return paddr;
+}*/
+#define VPN1(va) (((uintptr_t)va >> 22) & 0x3ff)
+#define VPN0(va) (((uintptr_t)va >> 12) & 0x3ff)
+#define PA_PPN_MASK(pa)  ((uintptr_t)pa & 0xfffff000)
+//#define PPN0(pa) (((uintptr_t)pa >> 12) & 0x3ff)
+#define PTE_PPN_MASK(pte) ((uintptr_t) pte & 0xfffff000)
+#define OFFSET(addr) ((uintptr_t) addr & 0xfff)
+#define VALID 0x1
+#define XWR 0xe
+paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
+  paddr_t pdir = cpu.satp << 12; //csr[4] = satp
+  paddr_t dire_addr = pdir + VPN1(vaddr) * sizeof(word_t);
+  word_t dire = paddr_read(dire_addr, sizeof(word_t));
+  if((dire & 0xf) != 0x1){
+      printf("vaddr = %x\n", vaddr);
+  }
+
+  assert((dire & 0xf) == 0x1);
+
+  paddr_t pt = PTE_PPN_MASK(dire);
+  paddr_t pte_addr = pt + VPN0(vaddr) * sizeof(word_t);
+  word_t pte = paddr_read(pte_addr, sizeof(word_t));
+  
+  if((pte & 0xf) != 0xf){
+      printf("vaddr = %x\n", vaddr);
+  }
+  assert((pte & 0xf) == 0xf);
+
+  paddr_t paddr = PTE_PPN_MASK(pte) + OFFSET(vaddr);
+  //assert( paddr == vaddr );
   return paddr;
 }

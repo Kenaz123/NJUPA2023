@@ -74,7 +74,7 @@ void __am_switch(Context *c) {
   }
 }
 
-void map(AddrSpace *as, void *va, void *pa, int prot) {
+/*void map(AddrSpace *as, void *va, void *pa, int prot) {
   uintptr_t va_trans = (uintptr_t) va;
   uintptr_t pa_trans = (uintptr_t) pa;
   //assert(PA_OFFSET(pa_trans) == 0);
@@ -99,6 +99,38 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
     *page_table_target = (ppn << 12) | PTE_V | PTE_R | PTE_W | PTE_X;
   }
   //printf("[map end]\n");
+}*/ 
+#define VPN1(va) (((uintptr_t)va >> 22) & 0x3ff)
+#define VPN0(va) (((uintptr_t)va >> 12) & 0x3ff)
+#define PA_PPN_MASK(pa)  ((uintptr_t)pa & 0xfffff000)
+//#define PPN0(pa) (((uintptr_t)pa >> 12) & 0x3ff)
+#define PTE_PPN_MASK(pte) ((uintptr_t) pte & 0xfffff000)
+#define OFFSET(addr) ((uintptr_t) addr & 0xfff)
+#define VALID 0x1
+#define XWR 0xe
+
+void map(AddrSpace *as, void *va, void *pa, int prot) {
+   // if(as->area != 0){
+     // assert((uintptr_t)va >= (uintptr_t)as->area.start && (uintptr_t)va < (uintptr_t)as->area.end);
+    //}
+    PTE *pdir = as->ptr;
+    assert(OFFSET(pdir) == 0);
+    //printf("pdir = %x\n",pdir);
+    PTE *dire = pdir + VPN1(va);
+    //printf("*dire = %x\n", *dire);
+    //printf("dire = %p VPN1 = %x\n", dire, VPN1(va));
+    static int nr = 0;
+    if (*dire == 0){
+        nr++;
+        PTE *pt = pgalloc_usr(PGSIZE);
+        *dire = (PTE_PPN_MASK(pt)) | VALID; // 11~12 bit in pte is zero, actually they are the 33~34 bit in pa
+    }
+    PTE* pt = (PTE *)(PTE_PPN_MASK(*dire));
+    assert(OFFSET(pt) == 0);
+    PTE* pte = pt + VPN0(va);
+    *pte = PA_PPN_MASK(pa) | VALID | XWR;
+    assert((*pte & 0xf) == 0xf);
+    //printf("nr = %d pte = %p\n", nr, pte);
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
