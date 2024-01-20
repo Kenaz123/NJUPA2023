@@ -27,7 +27,7 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  char *argv_nterm[] = {"/bin/pal", NULL};
+  char *argv_nterm[] = {"/bin/pal", "--skip", NULL};
   char *argv_hello[] = {"/bin/hello", NULL};
   char *envp[] = {NULL};
   //context_kload(&pcb[1], hello_fun, "A");
