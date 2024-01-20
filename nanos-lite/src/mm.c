@@ -28,7 +28,7 @@ extern PCB *current;
 extern uintptr_t load_file_break;
 #endif
 /* The brk() system call handler. */
-/*int mm_brk(uintptr_t brk) {
+int mm_brk(uintptr_t brk) {
 #ifdef HAS_VME
   //printf("mm_brk start allocating\n");
   if(current->max_brk == 0){
@@ -63,17 +63,6 @@ extern uintptr_t load_file_break;
 #else
   return 0;
 #endif
-}*/
-
-int mm_brk(uintptr_t brk) {
-  while (current->max_brk < brk) {
-    void *paddr = new_page(1) - PGSIZE;
-    void *vaddr = (void *)current->max_brk;
-    map(&current->as, vaddr, paddr, 0);
-    current->max_brk += PGSIZE;
-  }
-  // printf("brk = %#x, max_brk = %#x\n", brk, current->max_brk);
-  return 0;
 }
 
 void init_mm() {
