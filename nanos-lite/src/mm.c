@@ -49,7 +49,7 @@ int mm_brk(uintptr_t brk) {
   if(brk > current->max_brk){
     unsigned int gap = brk - current->max_brk;
     unsigned int page_count = gap / PGSIZE;
-    if(page_count * PGSIZE == gap) page_count--;
+    //if(page_count * PGSIZE == gap) page_count--;
     for(int i = 0; i <= page_count; i++){
       void * va_base = (void *)(current->max_brk + i * PGSIZE);
       void * pa_base = pg_alloc(PGSIZE);
