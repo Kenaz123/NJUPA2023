@@ -326,6 +326,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
   //printf("finish loader\n");
   pcb->cp = ucontext(&pcb->as, stack, (void(*)())entry);
   Log("entry:%p",(void *)entry);
+  pcb->cp->mscratch = (uintptr_t)base_mem;
   pcb->cp->GPRx = (uintptr_t)base_mem;
   pcb->max_brk = 0;
 

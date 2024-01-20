@@ -103,9 +103,11 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
   uint32_t *end = kstack.end;
-  Context *base = (Context *)(end - 36);
+  Context *base = (Context *)(end - sizeof(Context));
   base->pdir = as->ptr;
   base->mstatus = 1 << 7;
+  base->mscratch = (uintptr_t)kstack.end;
   base->mepc = (uintptr_t)entry;
+  base->gpr[0] = 0;
   return base;
 }

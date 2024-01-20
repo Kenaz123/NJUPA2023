@@ -40,11 +40,13 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   uint32_t *end = kstack.end;
-  Context *base = (Context *)(end - 36);//32+3+1=36
+  Context *base = (Context *)(end - sizeof(Context));//32+3+1+1=37
   base->pdir = NULL;
   base->mepc = (uintptr_t)entry;
   base->mstatus = 1 << 7;
   base->gpr[10] = (uintptr_t)arg;
+  base->mscratch = 0;
+  base->gpr[0] = 0;
   return base;
 }
 

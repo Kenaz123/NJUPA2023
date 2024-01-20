@@ -27,10 +27,12 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  char *argv[] = {"/bin/file-test", NULL};
+  char *argv_nterm[] = {"/bin/nterm", NULL};
+  char *argv_hello[] = {"/bin/hello", NULL};
   char *envp[] = {NULL};
-  context_kload(&pcb[1], hello_fun, "A");
-  context_uload(&pcb[0], "/bin/file-test", argv, envp);
+  //context_kload(&pcb[1], hello_fun, "A");
+  context_uload(&pcb[0], "/bin/file-test", argv_nterm, envp);
+  context_uload(&pcb[1], "/bin/hello", argv_hello, envp);
   //context_kload(&pcb[1], hello_fun, "B");
   switch_boot_pcb();
   //Log("Initializing processes...");

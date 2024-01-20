@@ -29,6 +29,7 @@ typedef struct {
   vaddr_t pc;
   riscv_CSRs csr;
   word_t satp;
+  word_t mscratch;
   bool INTR;
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
