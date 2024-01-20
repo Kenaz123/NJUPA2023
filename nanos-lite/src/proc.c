@@ -5,7 +5,7 @@
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
 static PCB pcb_boot = {};
 PCB *current = NULL;
-
+PCB *fg_pcb = NULL;
 void naive_uload(PCB *pcb, const char *filename);
 
 void context_kload(PCB *pcb, void (*entry)(void *), void *arg);
@@ -27,14 +27,14 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-  char *argv_nterm[] = {"/bin/bird", NULL};
- // char *argv_hello[] = {"/bin/hello", NULL};
+  char *argv_nterm[] = {"/bin/nterm", NULL};
+  char *argv_hello[] = {"/bin/hello", NULL};
   char *envp[] = {NULL};
-  context_kload(&pcb[1], hello_fun, "A");
-  context_uload(&pcb[0], "/bin/bird", argv_nterm, envp);
-  /*context_uload(&pcb[1], "/bin/nterm", argv_nterm, envp);
-  context_uload(&pcb[2], "/bin/nterm", argv_nterm, envp);*/
-  //context_uload(&pcb[3], "/bin/hello", argv_hello, envp);
+  //context_kload(&pcb[1], hello_fun, "A");
+  context_uload(&pcb[1], "/bin/nterm", argv_nterm, envp);
+  context_uload(&pcb[2], "/bin/nterm", argv_nterm, envp);
+  context_uload(&pcb[3], "/bin/nterm", argv_nterm, envp);
+  context_uload(&pcb[0], "/bin/hello", argv_hello, envp);
   //context_kload(&pcb[1], hello_fun, "B");
   switch_boot_pcb();
   //Log("Initializing processes...");
