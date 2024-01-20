@@ -69,7 +69,7 @@ int mm_brk(uintptr_t brk) {
   while (current->max_brk < brk) {
     void *paddr = new_page(1) - PGSIZE;
     void *vaddr = (void *)current->max_brk;
-    map(&current->as, vaddr, paddr, 0x7);
+    map(&current->as, vaddr, paddr, 0);
     current->max_brk += PGSIZE;
   }
   // printf("brk = %#x, max_brk = %#x\n", brk, current->max_brk);
