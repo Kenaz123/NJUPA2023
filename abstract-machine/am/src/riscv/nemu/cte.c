@@ -46,7 +46,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   base->mstatus = 1 << 7;
   base->gpr[10] = (uintptr_t)arg;
   base->mscratch = 0;
-  base->gpr[0] = 0;
+  //base->gpr[0] = 0;
   return base;
 }
 
