@@ -26,6 +26,11 @@ void hello_fun(void *arg) {
   }
 }
 
+static uint64_t vttime[2] = {15, 1};
+static uint64_t duration[2] = {0};
+static uint32_t cur_pcb_id = 0;
+#define argmin(a, b) (((a) < (b)) ? 0 : 1)
+
 void init_proc() {
   char *argv_nterm[] = {"/bin/nterm", NULL};
   char *argv_hello[] = {"/bin/hello", NULL};
@@ -36,6 +41,7 @@ void init_proc() {
   context_uload(&pcb[3], "/bin/nterm", argv_nterm, envp);
   context_uload(&pcb[0], "/bin/hello", argv_hello, envp);
   //context_kload(&pcb[1], hello_fun, "B");
+  fg_pcb = &pcb[1];
   switch_boot_pcb();
   //Log("Initializing processes...");
   //const char filename[] = "/bin/nterm";
@@ -46,6 +52,16 @@ void init_proc() {
 
 Context* schedule(Context *prev) {
   current->cp = prev;
-  current = ((current == &pcb[0]) ? &pcb[1] : &pcb[0]);
+  duration[cur_pcb_id] += vttime[cur_pcb_id];
+  cur_pcb_id = argmin(duration[0], duration[1]);
+  current = (cur_pcb_id == 0) ? &pcb[0] : fg_pcb;
+  //current = ((current == &pcb[0]) ? &pcb[1] : &pcb[0]);
   return current->cp;
+}
+
+void set_fg_pcb(uint32_t process_id)
+{
+  fg_pcb = &pcb[process_id];
+  if (duration[1] < duration[0])
+    duration[1] = duration[0];
 }

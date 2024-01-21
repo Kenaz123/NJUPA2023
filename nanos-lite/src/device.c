@@ -27,6 +27,8 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
   return len;
 }
 
+void set_fg_pcb(uint32_t process_id);
+
 size_t events_read(void *buf, size_t offset, size_t len) {
   //yield();
   memset(temp_buf,'\0',TEMP_BUFSIZE);
@@ -41,6 +43,18 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   } else {
     strncpy(buf,temp_buf,ret);
     ((char*)buf)[ret] = '\0';
+  }
+  switch(ev.keycode){
+    case AM_KEY_F1:
+      set_fg_pcb(1);
+      break;
+    case AM_KEY_F2:
+       set_fg_pcb(2);
+      break;
+    case AM_KEY_F3:
+      set_fg_pcb(3);
+      break;
+    default: break;
   }
   return ret;
   //return snprintf((char*)buf, len, "%s %s\n",ev.keydown ? "kd" : "ku",keyname[ev.keycode]);
